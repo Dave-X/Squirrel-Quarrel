@@ -22,10 +22,11 @@ namespace Squirrel
         Menu menu;
         MainMenu mainMenu;
 
+
         // Changed these to constants and declared here so the size can be set in the constructor.
         // Graphics information.
-        public const int SCREEN_WIDTH = 800;
-        public const int SCREEN_HEIGHT = 600;
+        public const int SCREEN_WIDTH = 1280;
+        public const int SCREEN_HEIGHT = 720;
         private const Boolean FULL_SCREEN = false;
 
         // All the sprite lists in the game.
@@ -45,6 +46,7 @@ namespace Squirrel
             graphics.PreferredBackBufferHeight = SCREEN_HEIGHT;
             graphics.PreferredBackBufferWidth = SCREEN_WIDTH;
             Content.RootDirectory = "Content";
+
         }
 
         /// <summary>
@@ -103,14 +105,23 @@ namespace Squirrel
             //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero));
             //Obstacles.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
             //Enemies.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_1"), new Vector2(128, 256)));
-            Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_2"), Vector2.Zero));
-            Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(356, -270)));
+            //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_1"), new Vector2(128, 256), Point.Zero));
+            //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_2"), Vector2.Zero, Point.Zero));
             //Obstacles.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
             //Hometree.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero));
-            Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            //Enemies.Sprites[0].moveTo(400f, 300f);
-            Hero.Sprites[0].moveTo(400f, 300f);
+            
+            
+            //Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
+            Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
+            Obstacles.Sprites[0].moveTo(Obstacles.Sprites[0].center());
+            Obstacles.Sprites[0].collisionOffset.Y = -32; // Bring in the top and bottom by 16 pixels each.
+            Obstacles.Sprites[0].collisionOffset.X = -16; 
+            Obstacles.Sprites[0].collisionCenter.Y = 48;
+            Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
+            Hero.Sprites[0].collisionOffset.X = -16;
+            Hero.Sprites[0].collisionOffset.Y = -16;
+            //Hero.Sprites[0].collisionCenter.Y = -128;
+            Hero.Sprites[0].moveTo(Hero.Sprites[0].center());
 
         }
 
@@ -162,7 +173,7 @@ namespace Squirrel
 
             // Section for drawing sprites.
 
-            
+
 
 
             base.Draw(gameTime);

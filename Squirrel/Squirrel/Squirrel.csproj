@@ -76,9 +76,9 @@
     <Compile Include="Map.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
-    <Compile Include="Creature.cs" />
+    <Compile Include="Creatures\Creature.cs" />
     <Compile Include="Enumerations.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Creatures\Player.cs" />
     <Compile Include="Sprites\Sprite.cs" />
     <Compile Include="Obstacle.cs" />
     <Compile Include="PowerUp.cs" />

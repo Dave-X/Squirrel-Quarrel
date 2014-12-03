@@ -18,25 +18,45 @@ namespace Squirrel
         {
             get
             {
-                return new Rectangle((int)position.X, (int)position.Y, frameSize.X, frameSize.Y);
-            }
-        }       
+                int left = (int)position.X - collisionOffset.X - collisionCenter.X;
+                int top = (int)position.Y - collisionOffset.Y - collisionCenter.Y;
+                int right = frameSize.X + (collisionOffset.X * 2);
+                int bottom = frameSize.Y + (collisionOffset.Y * 2);
 
-        public AnimatedSprite(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
-            : base(image, position)
-        {
-            this.frameSize = frameSize;
-            this.currentFrame = currentFrame;
-            this.sheetSize = sheetSize;
-            this.millisecondsPerFrame = millisecondsPerFrame;
+                return new Rectangle(left, top, right, bottom);
+                //return new Rectangle((int)position.X + collisionOffset.X, (int)position.Y + collisionOffset.Y, frameSize.X - (collisionOffset.X * 2), frameSize.Y - (collisionOffset.Y * 2));
+                //return new Rectangle((int)position.X + collisionOffset.X + collisionCenter.X, (int)position.Y + collisionOffset.Y + collisionCenter.Y, frameSize.X - (collisionOffset.X * 2), frameSize.Y - (collisionOffset.Y * 2));
+            }
         }
 
+
+        #region Constructors
+
+            public AnimatedSprite(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
+                : base(image, position)
+            {
+                this.frameSize = frameSize;
+                this.currentFrame = currentFrame;
+                this.sheetSize = sheetSize;
+                this.millisecondsPerFrame = millisecondsPerFrame;
+            }
+
+            public AnimatedSprite(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame, Point collisionOffset, Point collisionCenter)
+                : base(image, position, collisionOffset, collisionCenter)
+            {
+                this.frameSize = frameSize;
+                this.currentFrame = currentFrame;
+                this.sheetSize = sheetSize;
+                this.millisecondsPerFrame = millisecondsPerFrame;
+            }
+
+        #endregion
 
 
         public override void Update(GameTime gameTime)
         {
             timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
-            System.Diagnostics.Debug.Print(currentFrame.X.ToString());
+            //System.Diagnostics.Debug.Print(currentFrame.X.ToString());
             if (timeSinceLastFrame > millisecondsPerFrame)
             {
                 timeSinceLastFrame = 0;
@@ -56,6 +76,12 @@ namespace Squirrel
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(image, position, new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White);
+        }
+
+        // Returns the "center" as a vector based on the size of the sprite and the resolution.
+        public override Vector2 center()
+        {
+            return new Vector2((Game1.SCREEN_WIDTH / 2) - (frameSize.X / 2), (Game1.SCREEN_HEIGHT / 2) - (frameSize.Y / 2));
         }
 
     }

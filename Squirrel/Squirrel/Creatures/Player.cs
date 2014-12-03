@@ -7,12 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Squirrel
 {
-    public class Player : AnimatedSprite
+    public class Player : Creature
     {
-        private int Health { get; set; } // The health of the creature.
-
         public Player(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
             : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame)
+        {
+
+        }
+
+        public Player(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame, Point collisionOffset, Point collisionCenter)
+            : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame, collisionOffset, collisionCenter)
         {
 
         }
@@ -24,7 +28,8 @@ namespace Squirrel
             {
                 if (s.collidesWith(this) == true)
                 {
-                    System.Diagnostics.Debug.WriteLine("Collided...");
+                    System.Diagnostics.Debug.WriteLine("Collision with " + s.ToString());
+                    System.Diagnostics.Debug.WriteLine(this.collisionRectangle.ToString() + " collided with " +  s.collisionRectangle.ToString());
                 }
             }
             base.Update(gameTime);

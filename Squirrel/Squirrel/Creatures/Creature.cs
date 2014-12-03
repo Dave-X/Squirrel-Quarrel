@@ -16,5 +16,11 @@ namespace Squirrel
         {
 
         }
+
+        public Creature(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame, Point collisionOffset, Point collisionCenter)
+            : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame, collisionOffset, collisionCenter)
+        {
+
+        }
     }
 }
