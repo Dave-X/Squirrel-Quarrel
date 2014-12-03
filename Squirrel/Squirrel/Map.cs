@@ -130,7 +130,7 @@ namespace Squirrel
             {
                 powerup.position += (oldPosition - this.position);
             }
-            Game1.Hometree.Sprites[0].position += (oldPosition - this.position);
+            //Game1.Hometree.Sprites[0].position += (oldPosition - this.position);
         }
 
         /// <summary>

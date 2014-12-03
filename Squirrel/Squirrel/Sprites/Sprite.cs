@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+
 namespace Squirrel
 {
     // Base class sprites.
@@ -12,6 +13,14 @@ namespace Squirrel
     {
         public Texture2D image {get; set;}
         public Vector2 position; // Stores the position of this sprite.
+        public virtual Rectangle collisionRectangle // Used for detecting collisions.
+        {
+            get
+            {
+                return new Rectangle((int)position.X, (int)position.Y, image.Width, image.Height);
+            }
+        }
+    
 
         /// <summary>
         /// Reposition the sprite using a vector.
@@ -46,5 +55,13 @@ namespace Squirrel
         {
             spriteBatch.Draw(image, position, Color.White);
         }
+
+        // Returns true if this sprite collides with the given sprite.
+        public Boolean collidesWith(Sprite other)
+        {
+            return collisionRectangle.Intersects(other.collisionRectangle);
+        }
+
+
     } // GameObject
 }

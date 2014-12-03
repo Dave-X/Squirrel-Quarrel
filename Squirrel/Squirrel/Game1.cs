@@ -34,7 +34,7 @@ namespace Squirrel
         public static SpriteManager Enemies;
         public static SpriteManager Obstacles;
         public static SpriteManager Hometree;
-        public static AnimatedSprite Player;
+        public static SpriteManager Hero;
 
         public static GameStates gameState;
 
@@ -65,6 +65,8 @@ namespace Squirrel
             Nuts = new SpriteManager(this);
             Enemies = new SpriteManager(this);
             Hometree = new SpriteManager(this);
+            Hero = new SpriteManager(this);
+
             
             // The order here maters.
             Components.Add(PowerUps);
@@ -72,6 +74,7 @@ namespace Squirrel
             Components.Add(Enemies);
             Components.Add(Obstacles);
             Components.Add(Hometree);
+            Components.Add(Hero);
 
             //Hometree = new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero);
 
@@ -99,13 +102,15 @@ namespace Squirrel
 
             //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero));
             //Obstacles.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            Enemies.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
+            //Enemies.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
             Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_1"), new Vector2(128, 256)));
             Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_2"), Vector2.Zero));
             Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(356, -270)));
             //Obstacles.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            Hometree.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero));
-            Enemies.Sprites[0].moveTo(400f, 300f);
+            //Hometree.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero));
+            Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
+            //Enemies.Sprites[0].moveTo(400f, 300f);
+            Hero.Sprites[0].moveTo(400f, 300f);
 
         }
 
@@ -162,6 +167,5 @@ namespace Squirrel
 
             base.Draw(gameTime);
         }
-
     }
 }

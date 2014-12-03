@@ -14,7 +14,14 @@ namespace Squirrel
         Point sheetSize; // This is the number of sprites as number of columns, number of rows.
         int timeSinceLastFrame = 0;
         int millisecondsPerFrame = 0; // The amount of time to spend per a frame.
-       
+        public override Rectangle collisionRectangle // Used for detecting collisions.
+        {
+            get
+            {
+                return new Rectangle((int)position.X, (int)position.Y, frameSize.X, frameSize.Y);
+            }
+        }       
+
         public AnimatedSprite(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
             : base(image, position)
         {
@@ -23,6 +30,8 @@ namespace Squirrel
             this.sheetSize = sheetSize;
             this.millisecondsPerFrame = millisecondsPerFrame;
         }
+
+
 
         public override void Update(GameTime gameTime)
         {
