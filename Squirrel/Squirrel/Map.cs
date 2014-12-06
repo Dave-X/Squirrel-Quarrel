@@ -17,15 +17,20 @@ namespace Squirrel
     /// </summary>
     public class Map : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        Vector2 mapSize, position; //size of the entire map, position map will start at for a new game, current position
-        Texture2D texture;         //map background texture
+        Vector2 mapSize, mapPosition; //size of the entire map, position map will start at for a new game, current position
+        Vector2 topBorderPos, bttmBorderPos, leftBorderPos, rightBorderPos;  //positions of border pieces
+        Vector2 lrBorderSize, tbBorderSize;  //size of border pieces
+        Texture2D texture, textureBorder;         //map background texture
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
 
         public Map(Game game)
             : base(game)
         {
-            mapSize = new Vector2(2400f, 1200f);
+            mapSize = new Vector2(5120f, 2880f);
+            
             resetMap();
+
+            
         }
 
         /// <summary>
@@ -34,6 +39,13 @@ namespace Squirrel
         /// </summary>
         public override void Initialize()
         {
+            topBorderPos = new Vector2(mapPosition.X, mapPosition.Y - 56);
+            bttmBorderPos = new Vector2(mapPosition.X, mapPosition.Y + mapSize.Y - 328);
+            leftBorderPos = new Vector2(mapPosition.X - 32, mapPosition.Y);
+            rightBorderPos = new Vector2(mapPosition.X + mapSize.X - 608, mapPosition.Y);
+            lrBorderSize = new Vector2(640f, mapSize.Y);
+            tbBorderSize = new Vector2(mapSize.X, 384f);
+
             base.Initialize();
         }
 
@@ -42,6 +54,7 @@ namespace Squirrel
             //load in the texture for the ground (it will be drawn independent of the SpriteBatch stuff)
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Game.Content.Load<Texture2D>("ground");
+            textureBorder = Game.Content.Load<Texture2D>(".\\Textures\\Static\\Rock_1");
             
             base.LoadContent();
         }
@@ -53,14 +66,14 @@ namespace Squirrel
         public override void Update(GameTime gameTime)
         {
             //boundaries for map movement to stop player from walking off the map.
-            if (position.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
-                position.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
-            if (position.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
-                position.Y = -(mapSize.Y - GraphicsDevice.Viewport.Height);
-            if (position.X >= 0)                                                //Right boundary
-                position.X = 0;
-            if (position.Y >= 0)                                                //Bottom boundary
-                position.Y = 0;
+            if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
+                mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
+            if (mapPosition.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
+                mapPosition.Y = -(mapSize.Y - GraphicsDevice.Viewport.Height);
+            if (mapPosition.X >= 0)                                                //Right boundary
+                mapPosition.X = 0;
+            if (mapPosition.Y >= 0)                                                //Bottom boundary
+                mapPosition.Y = 0;
 
             //test controls for map movement
             
@@ -72,7 +85,6 @@ namespace Squirrel
                 this.updateMapPosition(new Vector2(5f, 0f));
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 this.updateMapPosition(new Vector2(-5f, 0f));
-            
             
             base.Update(gameTime);
         }
@@ -86,8 +98,19 @@ namespace Squirrel
             spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, null);
             
             //create and draw a rectangle to put the background texture on
-            Rectangle source = new Rectangle((int)position.X, (int)position.Y, (int)mapSize.X, (int)mapSize.Y);
-            spriteBatch.Draw(texture, Vector2.Zero, source, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            Rectangle background = new Rectangle(0, 0, (int)mapSize.X, (int)mapSize.Y);
+            //set up the rectangles to tile the border inside of
+            Rectangle topBorder = new Rectangle(0, 0, (int)tbBorderSize.X, (int)tbBorderSize.Y);
+            Rectangle bottomBorder = new Rectangle(0, 0, (int)tbBorderSize.X, (int)tbBorderSize.Y);
+            Rectangle leftBorder = new Rectangle(0, 0, (int)lrBorderSize.X, (int)lrBorderSize.Y);
+            Rectangle rightBorder = new Rectangle(0, 0, (int)lrBorderSize.X, (int)lrBorderSize.Y);
+
+            spriteBatch.Draw(texture, mapPosition, background, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            //draw the borders
+            spriteBatch.Draw(textureBorder, topBorderPos, topBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(textureBorder, bttmBorderPos, bottomBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(textureBorder, leftBorderPos, leftBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(textureBorder, rightBorderPos, rightBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
 
             spriteBatch.End();
 
@@ -102,34 +125,39 @@ namespace Squirrel
         public void updateMapPosition(Vector2 playerMovement)
         {
             //move map based on playerMovement
-            Vector2 oldPosition = this.position;
-            this.position += playerMovement;
+            Vector2 oldPosition = this.mapPosition;
+            this.mapPosition -= playerMovement;
             //boundaries for map movement to stop player from walking off the map.
-            if (position.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
-                position.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
-            if (position.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
-                position.Y = -(mapSize.Y - GraphicsDevice.Viewport.Height);
-            if (position.X >= 0)                                                //Right boundary
-                position.X = 0;
-            if (position.Y >= 0)                                                //Bottom boundary
-                position.Y = 0;
+            if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
+                mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
+            if (mapPosition.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
+                mapPosition.Y = -(mapSize.Y - GraphicsDevice.Viewport.Height);
+            if (mapPosition.X >= 0)                                                //Right boundary
+                mapPosition.X = 0;
+            if (mapPosition.Y >= 0)                                                //Bottom boundary
+                mapPosition.Y = 0;
             //loop through and update the position of each obstacle relative to any map movement done this frame
             foreach (Sprite obstacle in Game1.Obstacles.Sprites)
             {
-                obstacle.position += (oldPosition - this.position);
+                obstacle.position -= (oldPosition - this.mapPosition);
             }
             foreach (Sprite enemy in Game1.Enemies.Sprites)
             {
-                enemy.position += (oldPosition - this.position);
+                enemy.position -= (oldPosition - this.mapPosition);
             }
             foreach (Sprite nut in Game1.Nuts.Sprites)
             {
-                nut.position += (oldPosition - this.position);
+                nut.position -= (oldPosition - this.mapPosition);
             }
             foreach (Sprite powerup in Game1.PowerUps.Sprites)
             {
-                powerup.position += (oldPosition - this.position);
+                powerup.position -= (oldPosition - this.mapPosition);
             }
+            topBorderPos = new Vector2(mapPosition.X, mapPosition.Y);
+            bttmBorderPos = new Vector2(mapPosition.X, mapPosition.Y + mapSize.Y - 328);
+            leftBorderPos = new Vector2(mapPosition.X - 32, mapPosition.Y);
+            rightBorderPos = new Vector2(mapPosition.X + mapSize.X - 608, mapPosition.Y);
+            System.Diagnostics.Debug.WriteLine("topBorderPos X: " + topBorderPos.X + ", Y: " + topBorderPos.Y);
             //Game1.Hometree.Sprites[0].position += (oldPosition - this.position);
         }
 
@@ -138,7 +166,7 @@ namespace Squirrel
         /// </summary>
         public void resetMap()
         {
-            position = new Vector2(-mapSize.X / 2 + Game1.SCREEN_WIDTH / 2, -mapSize.Y / 2 + Game1.SCREEN_HEIGHT / 2);
+            mapPosition = new Vector2(-mapSize.X / 2 + Game1.SCREEN_WIDTH / 2, -mapSize.Y / 2 + Game1.SCREEN_HEIGHT / 2);
         }
     }
 }
