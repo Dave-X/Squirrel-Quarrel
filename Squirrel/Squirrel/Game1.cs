@@ -18,9 +18,12 @@ namespace Squirrel
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Map map;
+        public static Map map;
         Menu menu;
         MainMenu mainMenu;
+        Texture2D test1;
+        Texture2D test2;
+        public static SpriteManager spriteManager;
 
 
         // Changed these to constants and declared here so the size can be set in the constructor.
@@ -30,12 +33,7 @@ namespace Squirrel
         private const Boolean FULL_SCREEN = false;
 
         // All the sprite lists in the game.
-        public static SpriteManager PowerUps;
-        public static SpriteManager Nuts;
-        public static SpriteManager Enemies;
-        public static SpriteManager Obstacles;
-        public static SpriteManager Hometree;
-        public static SpriteManager Hero;
+
 
         public static GameStates gameState;
 
@@ -60,25 +58,8 @@ namespace Squirrel
             // TODO: Add your initialization logic here
             map = new Map(this);
             Components.Add(map);
-
-            // Setup sprite managers.
-            Obstacles = new SpriteManager(this);
-            PowerUps = new SpriteManager(this);
-            Nuts = new SpriteManager(this);
-            Enemies = new SpriteManager(this);
-            Hometree = new SpriteManager(this);
-            Hero = new SpriteManager(this);
-
-            
-            // The order here maters.
-            Components.Add(PowerUps);
-            Components.Add(Nuts);
-            Components.Add(Enemies);
-            Components.Add(Obstacles);
-            Components.Add(Hometree);
-            Components.Add(Hero);
-
-            //Hometree = new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero);
+            spriteManager = new SpriteManager(this);
+            Components.Add(spriteManager);
 
             menu = new Menu(this);
             Components.Add(menu);
@@ -98,7 +79,7 @@ namespace Squirrel
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+           
 
             // Testing stuff...
 
@@ -112,16 +93,23 @@ namespace Squirrel
             
             
             //Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
+            
+            /*
+            // holy comments
+
             Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
             Obstacles.Sprites[0].moveTo(Obstacles.Sprites[0].center());
             Obstacles.Sprites[0].collisionOffset.Y = -32; // Bring in the top and bottom by 16 pixels each.
             Obstacles.Sprites[0].collisionOffset.X = -16; 
             Obstacles.Sprites[0].collisionCenter.Y = 48;
-            Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
+            
             Hero.Sprites[0].collisionOffset.X = -16;
             Hero.Sprites[0].collisionOffset.Y = -16;
             //Hero.Sprites[0].collisionCenter.Y = -128;
             Hero.Sprites[0].moveTo(Hero.Sprites[0].center());
+
+            */
+
 
         }
 
@@ -177,6 +165,13 @@ namespace Squirrel
 
 
             base.Draw(gameTime);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            {
+                //spriteBatch.Draw(test1, new Rectangle(500, 500, 128, 128), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.2f);
+                //spriteBatch.Draw(test2, new Rectangle(565, 564, 128, 128), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+
+            }
+            spriteBatch.End();
         }
     }
 }

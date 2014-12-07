@@ -137,19 +137,19 @@ namespace Squirrel
             if (mapPosition.Y >= 0)                                                //Bottom boundary
                 mapPosition.Y = 0;
             //loop through and update the position of each obstacle relative to any map movement done this frame
-            foreach (Sprite obstacle in Game1.Obstacles.Sprites)
+            foreach (Sprite obstacle in Game1.spriteManager.Obstacles)
             {
                 obstacle.position -= (oldPosition - this.mapPosition);
             }
-            foreach (Sprite enemy in Game1.Enemies.Sprites)
+            foreach (Sprite enemy in Game1.spriteManager.Enemies)
             {
                 enemy.position -= (oldPosition - this.mapPosition);
             }
-            foreach (Sprite nut in Game1.Nuts.Sprites)
+            foreach (Sprite nut in Game1.spriteManager.Nuts)
             {
                 nut.position -= (oldPosition - this.mapPosition);
             }
-            foreach (Sprite powerup in Game1.PowerUps.Sprites)
+            foreach (Sprite powerup in Game1.spriteManager.PowerUps)
             {
                 powerup.position -= (oldPosition - this.mapPosition);
             }
@@ -167,6 +167,15 @@ namespace Squirrel
         public void resetMap()
         {
             mapPosition = new Vector2(-mapSize.X / 2 + Game1.SCREEN_WIDTH / 2, -mapSize.Y / 2 + Game1.SCREEN_HEIGHT / 2);
+        }
+
+        /// <summary>
+        /// Returns the value of the "camera or player" Y position.
+        /// </summary>
+        /// <returns>float stuff</returns>
+        public float getHeight()
+        {
+            return this.topBorderPos.Y;
         }
     }
 }

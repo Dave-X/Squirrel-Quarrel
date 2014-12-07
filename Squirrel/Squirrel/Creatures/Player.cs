@@ -23,15 +23,21 @@ namespace Squirrel
 
         public override void Update(GameTime gameTime)
         {
-            // Testing collision
-            foreach (Sprite s in Game1.Obstacles.Sprites)
+            // Update draw order.
+            //this.drawDepth = Game1.map.
+            this.drawDepth = Game1.map.getHeight() / -2160f;
+            System.Diagnostics.Debug.WriteLine("Player draw depth: " + this.drawDepth);
+            foreach (Sprite s in Game1.spriteManager.Obstacles)
             {
                 if (s.collidesWith(this) == true)
                 {
-                    System.Diagnostics.Debug.WriteLine("Collision with " + s.ToString());
-                    System.Diagnostics.Debug.WriteLine(this.collisionRectangle.ToString() + " collided with " +  s.collisionRectangle.ToString());
+                    //System.Diagnostics.Debug.WriteLine("Collision with " + s.ToString());
+                    //System.Diagnostics.Debug.WriteLine(this.collisionRectangle.ToString() + " collided with " +  s.collisionRectangle.ToString());
+                    System.Diagnostics.Debug.WriteLine("Draw depth: " + s.drawDepth);
+
                 }
             }
+           
             base.Update(gameTime);
         }
     }

@@ -15,6 +15,7 @@ namespace Squirrel
         public Vector2 position; // Stores the position of this sprite.
         public Point collisionOffset; // Set this point (x, y) as an adjustment for the collision box.
         public Point collisionCenter; // Sets the center (x, y) local to the sprite for collision detection.  The center is 0,0.
+        public float drawDepth = 0.5f; //
         public virtual Rectangle collisionRectangle // Used for detecting collisions.
         {
             get
@@ -23,13 +24,7 @@ namespace Squirrel
                 int top = (int)position.Y - collisionOffset.Y - collisionCenter.Y;
                 int right = image.Width + (collisionOffset.X * 2);
                 int bottom = image.Height + (collisionOffset.Y * 2);
-
                 return new Rectangle(left, top, right, bottom);
-                //return new Rectangle(pos.X, pos.Y, size.X / 2, size.Y / 2);
-                //return new Rectangle((int)position.X + collisionOffset.X + collisionCenter.X, (int)position.Y + collisionOffset.Y + collisionCenter.Y, image.Width - (collisionOffset.X * 2), image.Height - (collisionOffset.Y * 2));
-
-                //return new Rectangle((int)position.X + collisionOffset.X, (int)position.Y + collisionOffset.Y, image.Width - (collisionOffset.X * 2), image.Height - (collisionOffset.Y * 2));
-                
             }
         }
             
@@ -53,14 +48,30 @@ namespace Squirrel
             this.position = new Vector2(x, y);
         }
 
+        /// <summary>
+        /// Sprites with a higher number are drawn on top of sprites with a lower value.  
+        /// </summary>
+        /// <param name="z">Between 0 and 1.</param>
+        public void setDepth(float z)
+        {
+            this.drawDepth = z;
+        }
+
+        // Called once.  This is required because map moves its position.
+        private void calcDrawDepth()
+        {
+            this.drawDepth = (this.position.Y + (this.image.Height / 2) / -2160);
+            System.Diagnostics.Debug.WriteLine(this.drawDepth);
+        }
+
         public Sprite(Texture2D image, Vector2 position)
         {
             this.image = image;
             this.position = position;
             this.collisionOffset = Point.Zero;
             this.collisionCenter = Point.Zero;
+            calcDrawDepth();
         }
-
         // Additional constructor.
         public Sprite(Texture2D image, Vector2 position, Point collisionOffset, Point collisionCenter)
         {
@@ -68,6 +79,8 @@ namespace Squirrel
             this.position = position;
             this.collisionOffset = collisionOffset;
             this.collisionCenter = collisionCenter;
+            calcDrawDepth();
+
         }
 
         public virtual void Update(GameTime gameTime)
@@ -76,7 +89,8 @@ namespace Squirrel
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(image, position, Color.White);
+            //spriteBatch.Draw(image, position, Color.White);
+            spriteBatch.Draw(image, new Rectangle((int)position.X, (int)position.Y, image.Width, image.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, drawDepth);
         }
 
         // Returns true if this sprite collides with the given sprite.

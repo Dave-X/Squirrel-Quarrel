@@ -9,11 +9,11 @@ namespace Squirrel
 {
     public class AnimatedSprite : Sprite
     {
-        Point frameSize; // This is the size of each frame within the sprite.  A sprite sheet is made up of a number of frames.
+        Point frameSize; // This is the size of each frame within the sprite. A sprite sheet is made up of a number of frames.
         Point currentFrame; // The starting frame number on the sheet as row, column.
         Point sheetSize; // This is the number of sprites as number of columns, number of rows.
-        int timeSinceLastFrame = 0;
-        int millisecondsPerFrame = 0; // The amount of time to spend per a frame.
+        public int timeSinceLastFrame = 0;
+        public int millisecondsPerFrame = 0; // The amount of time to spend per a frame.
         public override Rectangle collisionRectangle // Used for detecting collisions.
         {
             get
@@ -55,6 +55,7 @@ namespace Squirrel
 
         public override void Update(GameTime gameTime)
         {
+
             timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds;
             //System.Diagnostics.Debug.Print(currentFrame.X.ToString());
             if (timeSinceLastFrame > millisecondsPerFrame)
@@ -75,7 +76,7 @@ namespace Squirrel
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(image, position, new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White);
+            spriteBatch.Draw(image, new Rectangle((int)position.X, (int)position.Y, frameSize.X, frameSize.Y), new Rectangle(currentFrame.X * frameSize.X, currentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.drawDepth);
         }
 
         // Returns the "center" as a vector based on the size of the sprite and the resolution.
