@@ -26,3 +26,15 @@ public enum GameStates
     // sprite load junk
     // 
 }
+
+public enum PlayerDirection
+{
+    North,
+    NorthEast,
+    East,
+    SouthEast,
+    South,
+    SouthWest,
+    West,
+    NorthWest,
+}

@@ -23,7 +23,9 @@ namespace Squirrel
         Texture2D texture, textureBorder;         //map background texture
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
 
-        bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;
+        bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
+        int rockCount;                                   //number of rock obstacles on the map
+        PlayerDirection playerDirection;                //the player's movement direction
 
         public Map(Game game)
             : base(game)
@@ -31,8 +33,6 @@ namespace Squirrel
             mapSize = new Vector2(5120f, 2880f);
             
             resetMap();
-
-            
         }
 
         /// <summary>
@@ -52,6 +52,11 @@ namespace Squirrel
             canMoveDown = true;
             canMoveLeft = true;
             canMoveRight = true;
+
+            rockCount = 20;
+            for (int i = 0; i < rockCount; i++)
+                Game1.spriteManager.Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
+            distributeObjects(Game1.spriteManager.Obstacles);
 
             base.Initialize();
         }
@@ -88,14 +93,58 @@ namespace Squirrel
             
 
             //controls for map movement
-            if (Keyboard.GetState().IsKeyDown(Keys.Up) && canMoveUp)
+            KeyboardState keystate = Keyboard.GetState();
+            int position = 0;
+            if ((keystate.IsKeyDown(Keys.Up) || keystate.IsKeyDown(Keys.W)) && canMoveUp)
+            {
                 this.updateMapPosition(new Vector2(0f, -5f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Down) && canMoveDown)
+                position += 1;
+            }
+            if ((keystate.IsKeyDown(Keys.Down) || keystate.IsKeyDown(Keys.S)) && canMoveDown)
+            {
                 this.updateMapPosition(new Vector2(0f, 5f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Right) && canMoveRight)
+                position += 4;
+            }
+            if ((keystate.IsKeyDown(Keys.Right) || keystate.IsKeyDown(Keys.D)) && canMoveRight)
+            {
                 this.updateMapPosition(new Vector2(5f, 0f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Left) && canMoveLeft)
+                position += 2;
+            }
+            if ((keystate.IsKeyDown(Keys.Left) || keystate.IsKeyDown(Keys.A)) && canMoveLeft)
+            {
                 this.updateMapPosition(new Vector2(-5f, 0f));
+                position += 8;
+            }
+
+            switch (position)
+            {
+                case 1:
+                    playerDirection = PlayerDirection.North;
+                    break;
+                case 3:
+                    playerDirection = PlayerDirection.NorthEast;
+                    break;
+                case 2:
+                    playerDirection = PlayerDirection.East;
+                    break;
+                case 6:
+                    playerDirection = PlayerDirection.SouthEast;
+                    break;
+                case 4:
+                    playerDirection = PlayerDirection.South;
+                    break;
+                case 12:
+                    playerDirection = PlayerDirection.SouthWest;
+                    break;
+                case 8:
+                    playerDirection = PlayerDirection.West;
+                    break;
+                case 9:
+                    playerDirection = PlayerDirection.NorthWest;
+                    break;
+                default:
+                    break;
+            }
 
             //reset collision bools
             canMoveUp = true;
@@ -144,6 +193,8 @@ namespace Squirrel
             //move map based on playerMovement
             Vector2 oldPosition = this.mapPosition;
             this.mapPosition -= playerMovement;
+            
+
             //boundaries for map movement to stop player from walking off the map.
             if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
                 mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
@@ -170,12 +221,11 @@ namespace Squirrel
             {
                 powerup.position -= (oldPosition - this.mapPosition);
             }
+            //Game1.spriteManager.HomeTree.position -= (oldPosition - this.mapPosition);
             topBorderPos = new Vector2(mapPosition.X, mapPosition.Y);
             bttmBorderPos = new Vector2(mapPosition.X, mapPosition.Y + mapSize.Y - 328);
             leftBorderPos = new Vector2(mapPosition.X - 32, mapPosition.Y);
             rightBorderPos = new Vector2(mapPosition.X + mapSize.X - 608, mapPosition.Y);
-            System.Diagnostics.Debug.WriteLine("topBorderPos X: " + topBorderPos.X + ", Y: " + topBorderPos.Y);
-            //Game1.Hometree.Sprites[0].position += (oldPosition - this.position);
         }
 
         /// <summary>
@@ -231,6 +281,71 @@ namespace Squirrel
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Properly distributes objects around the map and resolves collisions.
+        /// </summary>
+        /// <param name="objects">The objects to be disributed</param>
+        public void distributeObjects(List<Sprite> objects)
+        {
+            foreach (Sprite obj in objects)
+            {
+                bool collision;
+                do
+                {
+                    obj.position = randomMapPosition();
+                    collision = false;
+                    /*
+                    if (obj.collidesWith(Game1.spriteManager.HomeTree))
+                        collision = true;
+                    if (obj.collidesWith(Game1.spriteManager.Hero))
+                        collision = true;*/
+                    foreach (Sprite obj2 in Game1.spriteManager.Obstacles)
+                    {
+                        if (obj == obj2)
+                            continue;
+                        if (obj.collidesWith(obj2))
+                            collision = true;
+                    }
+                    foreach (Sprite obj2 in Game1.spriteManager.Nuts)
+                    {
+                        if (obj == obj2)
+                            continue;
+                        if (obj.collidesWith(obj2))
+                            collision = true;
+                    }
+                    foreach (Sprite obj2 in Game1.spriteManager.PowerUps)
+                    {
+                        if (obj == obj2)
+                            continue;
+                        if (obj.collidesWith(obj2))
+                            collision = true;
+                    }
+                }
+                while(collision);
+            }
+        }
+
+        /// <summary>
+        /// Generates a random map position for an object to be placed at.
+        /// </summary>
+        /// <returns>A random map position</returns>
+        public Vector2 randomMapPosition()
+        {
+            Random random = new Random();
+            Vector2 pos = new Vector2(random.Next((int)lrBorderSize.X, (int)(mapSize.X - lrBorderSize.X)),
+                random.Next((int)tbBorderSize.Y, (int)(mapSize.Y - tbBorderSize.Y)));
+            return mapPosition + pos;
+        }
+
+        /// <summary>
+        /// This returns an enumeration that signifies player direction, (North, NorthEast, East, etc.)
+        /// </summary>
+        /// <returns>player direction as PlayerDirection Enum</returns>
+        public PlayerDirection getPlayerDirection()
+        {
+            return playerDirection;
         }
     }
 }
