@@ -23,6 +23,7 @@ namespace Squirrel
         Texture2D texture;         //map background texture
         Texture2D rock1Tex, rock2Tex, rock3Tex;     //rock textures
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
+        Random random;
 
         bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
         int rockCount;                                   //number of rock obstacles on the map
@@ -42,6 +43,8 @@ namespace Squirrel
         /// </summary>
         public override void Initialize()
         {
+            random = new Random();
+
             topBorderPos = new Vector2(mapPosition.X, mapPosition.Y - 56);
             bttmBorderPos = new Vector2(mapPosition.X, mapPosition.Y + mapSize.Y - 328);
             leftBorderPos = new Vector2(mapPosition.X - 32, mapPosition.Y);
@@ -294,7 +297,8 @@ namespace Squirrel
                 bool collision;
                 do
                 {
-                    obj.position = randomMapPosition();
+                    //obj.position = randomMapPosition();
+                    obj.moveTo(randomMapPosition());
                     collision = false;
                     /*
                     if (obj.collidesWith(Game1.spriteManager.HomeTree))
@@ -333,7 +337,6 @@ namespace Squirrel
         /// <returns>A random map position</returns>
         public Vector2 randomMapPosition()
         {
-            Random random = new Random();
             Vector2 pos = new Vector2(random.Next((int)lrBorderSize.X, (int)(mapSize.X - lrBorderSize.X)),
                 random.Next((int)tbBorderSize.Y, (int)(mapSize.Y - tbBorderSize.Y)));
             return mapPosition + pos;
