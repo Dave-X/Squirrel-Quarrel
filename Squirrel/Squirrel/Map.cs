@@ -23,6 +23,8 @@ namespace Squirrel
         Texture2D texture, textureBorder;         //map background texture
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
 
+        bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;
+
         public Map(Game game)
             : base(game)
         {
@@ -45,6 +47,11 @@ namespace Squirrel
             rightBorderPos = new Vector2(mapPosition.X + mapSize.X - 608, mapPosition.Y);
             lrBorderSize = new Vector2(640f, mapSize.Y);
             tbBorderSize = new Vector2(mapSize.X, 384f);
+
+            canMoveUp = true;
+            canMoveDown = true;
+            canMoveLeft = true;
+            canMoveRight = true;
 
             base.Initialize();
         }
@@ -75,16 +82,26 @@ namespace Squirrel
             if (mapPosition.Y >= 0)                                                //Bottom boundary
                 mapPosition.Y = 0;
 
-            //test controls for map movement
+            //prevent movement in case of collision
+            collisionMovement(Game1.spriteManager.Obstacles);
+            collisionMovement(Game1.spriteManager.Enemies);
             
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+
+            //controls for map movement
+            if (Keyboard.GetState().IsKeyDown(Keys.Up) && canMoveUp)
                 this.updateMapPosition(new Vector2(0f, -5f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            if (Keyboard.GetState().IsKeyDown(Keys.Down) && canMoveDown)
                 this.updateMapPosition(new Vector2(0f, 5f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (Keyboard.GetState().IsKeyDown(Keys.Right) && canMoveRight)
                 this.updateMapPosition(new Vector2(5f, 0f));
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) && canMoveLeft)
                 this.updateMapPosition(new Vector2(-5f, 0f));
+
+            //reset collision bools
+            canMoveUp = true;
+            canMoveDown = true;
+            canMoveLeft = true;
+            canMoveRight = true;
             
             base.Update(gameTime);
         }
@@ -176,6 +193,44 @@ namespace Squirrel
         public float getHeight()
         {
             return this.topBorderPos.Y;
+        }
+
+        /// <summary>
+        /// Returns the position of the map relative to the screen.
+        /// </summary>
+        /// <returns>Map position</returns>
+        public Vector2 getMapPosition()
+        {
+            return this.mapPosition;
+        }
+
+        /// <summary>
+        /// Checks for collision and prevents movement based on that collision
+        /// </summary>
+        /// <param name="sprites">The list of sprites player position is being compared to.</param>
+        public void collisionMovement(List<Sprite> sprites)
+        {
+            Sprite player = Game1.spriteManager.Hero;
+            foreach (Sprite s in sprites)
+            {
+                if (s.collidesWith(player))
+                {
+                    if (Math.Abs(s.position.X - player.position.X) > Math.Abs(s.position.Y - player.position.Y))
+                    {
+                        if (s.position.X - player.position.X < 0)
+                            canMoveLeft = false;
+                        else
+                            canMoveRight = false;
+                    }
+                    else
+                    {
+                        if (s.position.Y - player.position.Y < 0)
+                            canMoveUp = false;
+                        else
+                            canMoveDown = false;
+                    }
+                }
+            }
         }
     }
 }
