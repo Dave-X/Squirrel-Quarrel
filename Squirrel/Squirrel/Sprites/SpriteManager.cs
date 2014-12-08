@@ -42,9 +42,12 @@ namespace Squirrel
 
             Hero = new Player(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16);
             //Hero = new StaticSprite(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero);
-            Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
+            //Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
+            Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+            Hero.collisionOffset.Y = -16;
+            Hero.collisionOffset.X = -8;
             Hero.moveTo(Hero.center());
-
+            
             base.Initialize();
         }
 

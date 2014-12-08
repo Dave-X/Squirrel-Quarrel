@@ -33,7 +33,7 @@ namespace Squirrel
                 {
                     //System.Diagnostics.Debug.WriteLine("Collision with " + s.ToString());
                     //System.Diagnostics.Debug.WriteLine(this.collisionRectangle.ToString() + " collided with " +  s.collisionRectangle.ToString());
-                    System.Diagnostics.Debug.WriteLine("Draw depth: " + s.drawDepth);
+                    //System.Diagnostics.Debug.WriteLine("Draw depth: " + s.drawDepth);
 
                 }
             }

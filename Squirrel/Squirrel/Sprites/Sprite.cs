@@ -60,8 +60,8 @@ namespace Squirrel
         // Called once.  This is required because map moves its position.
         private void calcDrawDepth()
         {
-            this.drawDepth = (this.position.Y + (this.image.Height / 2) / -2160);
-            System.Diagnostics.Debug.WriteLine(this.drawDepth);
+            this.drawDepth = (720.0f + (image.Height / 2) + position.Y) / 2160.0f;
+            System.Diagnostics.Debug.WriteLine(this.ToString() + " DRAW DEPTH: " + drawDepth);
         }
 
         public Sprite(Texture2D image, Vector2 position)
