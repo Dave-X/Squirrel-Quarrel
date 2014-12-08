@@ -297,7 +297,6 @@ namespace Squirrel
                 bool collision;
                 do
                 {
-                    //obj.position = randomMapPosition();
                     obj.moveTo(randomMapPosition());
                     collision = false;
                     /*
