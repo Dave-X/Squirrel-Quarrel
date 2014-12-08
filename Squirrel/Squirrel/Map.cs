@@ -20,7 +20,8 @@ namespace Squirrel
         Vector2 mapSize, mapPosition; //size of the entire map, position map will start at for a new game, current position
         Vector2 topBorderPos, bttmBorderPos, leftBorderPos, rightBorderPos;  //positions of border pieces
         Vector2 lrBorderSize, tbBorderSize;  //size of border pieces
-        Texture2D texture, textureBorder;         //map background texture
+        Texture2D texture;         //map background texture
+        Texture2D rock1Tex, rock2Tex, rock3Tex;     //rock textures
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
 
         bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
@@ -66,7 +67,7 @@ namespace Squirrel
             //load in the texture for the ground (it will be drawn independent of the SpriteBatch stuff)
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Game.Content.Load<Texture2D>("ground");
-            textureBorder = Game.Content.Load<Texture2D>(".\\Textures\\Static\\Rock_1");
+            rock1Tex = Game.Content.Load<Texture2D>(".\\Textures\\Static\\Rock_1");
             
             base.LoadContent();
         }
@@ -90,7 +91,6 @@ namespace Squirrel
             //prevent movement in case of collision
             collisionMovement(Game1.spriteManager.Obstacles);
             collisionMovement(Game1.spriteManager.Enemies);
-            
 
             //controls for map movement
             KeyboardState keystate = Keyboard.GetState();
@@ -173,10 +173,10 @@ namespace Squirrel
 
             spriteBatch.Draw(texture, mapPosition, background, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
             //draw the borders
-            spriteBatch.Draw(textureBorder, topBorderPos, topBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(textureBorder, bttmBorderPos, bottomBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(textureBorder, leftBorderPos, leftBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(textureBorder, rightBorderPos, rightBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(rock1Tex, topBorderPos, topBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(rock1Tex, bttmBorderPos, bottomBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(rock1Tex, leftBorderPos, leftBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(rock1Tex, rightBorderPos, rightBorder, Color.White, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.5f);
 
             spriteBatch.End();
 
@@ -195,7 +195,7 @@ namespace Squirrel
             this.mapPosition -= playerMovement;
             
 
-            //boundaries for map movement to stop player from walking off the map.
+            /*//boundaries for map movement to stop player from walking off the map.
             if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
                 mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
             if (mapPosition.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
@@ -203,23 +203,23 @@ namespace Squirrel
             if (mapPosition.X >= 0)                                                //Right boundary
                 mapPosition.X = 0;
             if (mapPosition.Y >= 0)                                                //Bottom boundary
-                mapPosition.Y = 0;
+                mapPosition.Y = 0;*/
             //loop through and update the position of each obstacle relative to any map movement done this frame
             foreach (Sprite obstacle in Game1.spriteManager.Obstacles)
             {
-                obstacle.position -= (oldPosition - this.mapPosition);
+                obstacle.moveTo(obstacle.position - (oldPosition - this.mapPosition));
             }
             foreach (Sprite enemy in Game1.spriteManager.Enemies)
             {
-                enemy.position -= (oldPosition - this.mapPosition);
+                enemy.moveTo(enemy.position - (oldPosition - this.mapPosition));
             }
             foreach (Sprite nut in Game1.spriteManager.Nuts)
             {
-                nut.position -= (oldPosition - this.mapPosition);
+                nut.moveTo(nut.position - (oldPosition - this.mapPosition));
             }
             foreach (Sprite powerup in Game1.spriteManager.PowerUps)
             {
-                powerup.position -= (oldPosition - this.mapPosition);
+                powerup.moveTo(powerup.position - (oldPosition - this.mapPosition));
             }
             //Game1.spriteManager.HomeTree.position -= (oldPosition - this.mapPosition);
             topBorderPos = new Vector2(mapPosition.X, mapPosition.Y);
