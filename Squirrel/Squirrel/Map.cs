@@ -21,12 +21,12 @@ namespace Squirrel
         Vector2 topBorderPos, bttmBorderPos, leftBorderPos, rightBorderPos;  //positions of border pieces
         Vector2 lrBorderSize, tbBorderSize;  //size of border pieces
         Texture2D texture;         //map background texture
-        Texture2D rock1Tex, rock2Tex, rock3Tex;     //rock textures
+        Texture2D rock1Tex, rock2Tex, rock3Tex, nutTex, enemyTex;     //rock textures
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
         Random random;
 
         bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
-        int rockCount;                                   //number of rock obstacles on the map
+        int rockCount, nutCount, enemyCount;                        //number of rock obstacles on the map
         PlayerDirection playerDirection;                //the player's movement direction
 
         public Map(Game game)
@@ -57,10 +57,21 @@ namespace Squirrel
             canMoveLeft = true;
             canMoveRight = true;
 
+            rock1Tex = Game.Content.Load<Texture2D>(@"Textures\Static\Rock_1");
+            nutTex = Game.Content.Load<Texture2D>("acorn");
+            enemyTex = Game.Content.Load<Texture2D>("sampleSpriteSheet");
             rockCount = 20;
             for (int i = 0; i < rockCount; i++)
-                Game1.spriteManager.Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
+                Game1.spriteManager.Obstacles.Add(new Obstacle(rock1Tex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+            nutCount = 15;
+            for (int i = 0; i < nutCount; i++)
+                Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+            enemyCount = 5;
+            for (int i = 0; i < nutCount; i++)
+                Game1.spriteManager.Enemies.Add(new StandardEnemy(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
             distributeObjects(Game1.spriteManager.Obstacles);
+            distributeObjects(Game1.spriteManager.Nuts);
+            distributeObjects(Game1.spriteManager.Enemies);
 
             base.Initialize();
         }
@@ -70,7 +81,6 @@ namespace Squirrel
             //load in the texture for the ground (it will be drawn independent of the SpriteBatch stuff)
             spriteBatch = new SpriteBatch(GraphicsDevice);
             texture = Game.Content.Load<Texture2D>("ground");
-            rock1Tex = Game.Content.Load<Texture2D>(".\\Textures\\Static\\Rock_1");
             
             base.LoadContent();
         }
@@ -148,6 +158,25 @@ namespace Squirrel
                 default:
                     break;
             }
+            
+            foreach (Sprite enemy in Game1.spriteManager.Enemies)
+            {
+                //move the enemy toward the player if the enemy is entirely on screen
+                if (enemy.position.X >= 0 && enemy.position.X <= Game1.SCREEN_WIDTH - 64
+                    && enemy.position.Y >= 0 && enemy.position.Y <= Game1.SCREEN_HEIGHT - 64)
+                {
+                    Vector2 newPos = enemy.position;
+                    if (enemy.position.X < Game1.spriteManager.Hero.position.X)
+                        newPos.X = enemy.position.X + 1;
+                    if (enemy.position.X > Game1.spriteManager.Hero.position.X)
+                        newPos.X = enemy.position.X - 1;
+                    if (enemy.position.Y < Game1.spriteManager.Hero.position.Y)
+                        newPos.Y = enemy.position.Y + 1;
+                    if (enemy.position.Y > Game1.spriteManager.Hero.position.Y)
+                        newPos.Y = enemy.position.Y - 1;
+                    enemy.moveTo(newPos);
+                }
+            }
 
             //reset collision bools
             canMoveUp = true;
@@ -198,7 +227,7 @@ namespace Squirrel
             this.mapPosition -= playerMovement;
             
 
-            /*//boundaries for map movement to stop player from walking off the map.
+            //boundaries for map movement to stop player from walking off the map.
             if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
                 mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
             if (mapPosition.Y <= -(mapSize.Y - GraphicsDevice.Viewport.Height))    //Top boundary
@@ -206,7 +235,7 @@ namespace Squirrel
             if (mapPosition.X >= 0)                                                //Right boundary
                 mapPosition.X = 0;
             if (mapPosition.Y >= 0)                                                //Bottom boundary
-                mapPosition.Y = 0;*/
+                mapPosition.Y = 0;
             //loop through and update the position of each obstacle relative to any map movement done this frame
             foreach (Sprite obstacle in Game1.spriteManager.Obstacles)
             {
@@ -214,6 +243,7 @@ namespace Squirrel
             }
             foreach (Sprite enemy in Game1.spriteManager.Enemies)
             {
+                //move the enemy based on the map movement
                 enemy.moveTo(enemy.position - (oldPosition - this.mapPosition));
             }
             foreach (Sprite nut in Game1.spriteManager.Nuts)

@@ -7,18 +7,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Squirrel
 {
-    class Obstacle : StaticSprite
+    class Nut : Obstacle
     {
-        public Obstacle(Texture2D image, Vector2 position)
+        public Nut(Texture2D image, Vector2 position)
             : base(image, position)
         {
 
         }
 
-        public Obstacle(Texture2D image, Vector2 position, Point collisionOffset, Point collisionCenter)
+        public Nut(Texture2D image, Vector2 position, Point collisionOffset, Point collisionCenter)
             : base(image, position, collisionOffset, collisionCenter)
         {
 
         }
-    } // Obstacle
+    }
 }
