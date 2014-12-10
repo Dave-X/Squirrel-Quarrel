@@ -62,6 +62,16 @@ namespace Squirrel
             {
                 s.Update(gameTime);
             }
+            /////////////Added by Matt, not sure if this is correct//////////////////
+            foreach (Sprite s in Nuts)
+            {
+                s.Update(gameTime);
+            }
+            foreach (Sprite s in Enemies)
+            {
+                s.Update(gameTime);
+            }
+            ///////////////////////////////////////////////////////////////////////
             Hero.Update(gameTime);
             base.Update(gameTime);
         }
@@ -75,6 +85,16 @@ namespace Squirrel
                 {
                     s.Draw(gameTime, spriteBatch);
                 }
+                /////////////Added by Matt, not sure if this is correct//////////////////
+                foreach (Sprite s in Nuts)
+                {
+                    s.Draw(gameTime, spriteBatch);
+                }
+                foreach (Sprite s in Enemies)
+                {
+                    s.Draw(gameTime, spriteBatch);
+                }
+                /////////////////////////////////////////////////////////////////////////
                 Hero.Draw(gameTime, spriteBatch);
             }
             spriteBatch.End();
