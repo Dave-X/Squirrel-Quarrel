@@ -78,6 +78,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Nut.cs" />
+    <Compile Include="Projectile.cs" />
     <Compile Include="Sprites\AnimatedSprite.cs" />
     <Compile Include="Creatures\Creature.cs" />
     <Compile Include="Enumerations.cs" />

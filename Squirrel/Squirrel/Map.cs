@@ -103,7 +103,7 @@ namespace Squirrel
 
             //prevent movement in case of collision
             collisionMovement(Game1.spriteManager.Obstacles);
-            collisionMovement(Game1.spriteManager.Enemies);
+            //collisionMovement(Game1.spriteManager.Enemies);
 
             //controls for map movement
             KeyboardState keystate = Keyboard.GetState();
@@ -254,6 +254,14 @@ namespace Squirrel
             {
                 powerup.moveTo(powerup.position - (oldPosition - this.mapPosition));
             }
+            //****** ADDED FOR PROJECTILES
+            foreach (Sprite projectile in Game1.spriteManager.Projectiles)
+            {
+                projectile.moveTo(projectile.position - (oldPosition - this.mapPosition));
+            }
+
+
+
             //Game1.spriteManager.HomeTree.position -= (oldPosition - this.mapPosition);
             topBorderPos = new Vector2(mapPosition.X, mapPosition.Y);
             bttmBorderPos = new Vector2(mapPosition.X, mapPosition.Y + mapSize.Y - 328);

@@ -106,6 +106,13 @@ namespace Squirrel
             return new Vector2((Game1.SCREEN_WIDTH / 2) - (image.Width / 2), (Game1.SCREEN_HEIGHT / 2) - (image.Height / 2));
         }
 
+        public override string ToString()
+        {
+            StringBuilder SB = new StringBuilder();
+            SB.Append("Draw Depth: " + this.drawDepth + ", ");
+            return SB.ToString();
+        }
+
 
     } // GameObject
 }
