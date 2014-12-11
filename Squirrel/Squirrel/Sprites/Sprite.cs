@@ -16,6 +16,7 @@ namespace Squirrel
         public Point collisionOffset; // Set this point (x, y) as an adjustment for the collision box.
         public Point collisionCenter; // Sets the center (x, y) local to the sprite for collision detection.  The center is 0,0.
         public float drawDepth = 0.5f; //
+        public bool dead = false;
         public virtual Rectangle collisionRectangle // Used for detecting collisions.
         {
             get
@@ -58,7 +59,7 @@ namespace Squirrel
         }
 
         // Called once.  This is required because map moves its position.
-        private void calcDrawDepth()
+        public void calcDrawDepth()
         {
             this.drawDepth = (720.0f + (image.Height / 2) + position.Y) / 2160.0f;
             System.Diagnostics.Debug.WriteLine(this.ToString() + " DRAW DEPTH: " + drawDepth);

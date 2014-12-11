@@ -40,16 +40,38 @@ namespace Squirrel
         public override void Initialize()
         {
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
+            bullet = Game.Content.Load<Texture2D>(@"Textures\bulletS");
 
-            bullet = Game.Content.Load<Texture2D>(@"Textures\bullet");
-            Hero = new Player(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16);
+
+            // Hero animations.
+            Texture2D playerMove = Game.Content.Load<Texture2D>(@"Textures\Goat\playerMoveGun");
+            Texture2D playerIdle = Game.Content.Load<Texture2D>(@"Textures\Goat\playerIdleGun");
+            
+
+            Hero = new Player(playerIdle, Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
+            ((Creature)Hero).move = new Animation(playerMove, new Point(92, 92), Point.Zero, new Point(8, 1), 16);
+            Hero.moveTo(Hero.center());
+           
+
+            //Hero = new Player(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16);
             //Hero = new StaticSprite(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero);
             //Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
             //Obstacles.Add(new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
-            Hero.collisionOffset.Y = -16;
-            Hero.collisionOffset.X = -8;
-            Hero.moveTo(Hero.center());
             
+            //Hero.collisionOffset.Y = -16;
+            //Hero.collisionOffset.X = -8;
+            //Hero.moveTo(Hero.center());
+            Enemy x = new StandardEnemy(Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatIdle"), Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
+            Enemies.Add(x);
+            Texture2D xy = Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatMove");
+            x.move = new Animation(xy, new Point(92, 92), Point.Zero, new Point(8, 1), 64);
+
+
+            HomeTree = new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), new Vector2(Hero.position.X - 290, Hero.position.Y - 650));
+            HomeTree.collisionOffset.X = -132;
+            HomeTree.collisionOffset.Y = -309;
+            HomeTree.collisionCenter.Y = -240;
+            Obstacles.Add(HomeTree);
             base.Initialize();
         }
 
@@ -59,7 +81,7 @@ namespace Squirrel
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            CleanUpProjectiles();
+            CleanUp();
             // Update each sprite in the order it was drawn.
             foreach (Sprite s in Obstacles)
             {
@@ -81,14 +103,28 @@ namespace Squirrel
             base.Update(gameTime);
         }
 
-        // Removes timed out projectiles.
-        private void CleanUpProjectiles()
+        // Removes stuffs.
+        private void CleanUp()
         {
             for (int i = 0; i < Projectiles.Count; i++)
             {
-                if (Projectiles[i].dead)
+                if (Projectiles[i].dead || Projectiles[i].hit)
                 {
                     Projectiles.RemoveAt(i);
+                }
+            }
+            for (int i = 0; i < Enemies.Count; i++)
+            {
+                if (Enemies[i].dead)
+                {
+                    Enemies.RemoveAt(i);
+                }
+            }
+            for (int i = 0; i < Nuts.Count; i++)
+            {
+                if (Nuts[i].dead)
+                {
+                    Nuts.RemoveAt(i);
                 }
             }
         }
@@ -96,7 +132,18 @@ namespace Squirrel
 
         public void Shoot(Vector2 position, Vector2 direction)
         {
-            this.Projectiles.Add(new Projectile(bullet, position, direction));
+            Vector2 reposition;
+            if (direction.X > 0)
+            {
+                reposition = new Vector2(position.X + 84, position.Y + 62);
+            }
+            else
+            {
+                reposition = new Vector2(position.X + 4, position.Y + 62);
+            }
+            
+            
+            this.Projectiles.Add(new Projectile(bullet, reposition, direction));
         }
 
 
@@ -125,8 +172,11 @@ namespace Squirrel
                     s.Draw(gameTime, spriteBatch);
                 }
 
+                 
+
 
                 Hero.Draw(gameTime, spriteBatch);
+                //HomeTree.Draw(gameTime, spriteBatch);
             }
             spriteBatch.End();
 

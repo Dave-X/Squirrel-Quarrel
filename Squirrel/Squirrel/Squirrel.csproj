@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Creatures\Enemy.cs" />
     <Compile Include="Creatures\StandardEnemy.cs" />
+    <Compile Include="Interface.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Menu.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Creatures\Creature.cs" />
     <Compile Include="Enumerations.cs" />
     <Compile Include="Creatures\Player.cs" />
+    <Compile Include="Sprites\Animation.cs" />
     <Compile Include="Sprites\Sprite.cs" />
     <Compile Include="Obstacle.cs" />
     <Compile Include="PowerUp.cs" />

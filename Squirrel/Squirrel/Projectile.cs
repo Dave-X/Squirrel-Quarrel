@@ -12,6 +12,7 @@ namespace Squirrel
         public Vector2 direction; // The direction and speed this projectile is traveling.
         public int timeAlive = 0; // How long this projectile has been going.
         public int lifeSpan = 1000;
+        public bool hit = false;
         public bool dead
         {
             get
@@ -34,6 +35,21 @@ namespace Squirrel
         {
             timeAlive += gameTime.ElapsedGameTime.Milliseconds;
             this.position += direction;
+
+            // Check if it hit an enemy.
+            foreach (Creature c in Game1.spriteManager.Enemies)
+            {
+                if (this.collidesWith(c))
+                {
+                    this.hit = true;
+                    c.takeDamage(25);
+                    ((Enemy)c).red = true;
+                    if (c.Health == 0)
+                    {
+                        c.dead = true;
+                    }
+                }
+            }            
         }
 
 

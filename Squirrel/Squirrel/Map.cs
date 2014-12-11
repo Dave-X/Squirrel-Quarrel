@@ -24,6 +24,7 @@ namespace Squirrel
         Texture2D rock1Tex, rock2Tex, rock3Tex, nutTex, enemyTex;     //rock textures
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
         Random random;
+        public Boolean isMoving = false;
 
         bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
         int rockCount, nutCount, enemyCount;                        //number of rock obstacles on the map
@@ -58,17 +59,20 @@ namespace Squirrel
             canMoveRight = true;
 
             rock1Tex = Game.Content.Load<Texture2D>(@"Textures\Static\Rock_1");
-            nutTex = Game.Content.Load<Texture2D>("acorn");
+            // CHANGED -> nutTex = Game.Content.Load<Texture2D>("acorn");
+            nutTex = Game.Content.Load<Texture2D>("acornSmall");
             enemyTex = Game.Content.Load<Texture2D>("sampleSpriteSheet");
             rockCount = 20;
             for (int i = 0; i < rockCount; i++)
                 Game1.spriteManager.Obstacles.Add(new Obstacle(rock1Tex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
             nutCount = 15;
             for (int i = 0; i < nutCount; i++)
-                Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+                //CHANGED -> Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+                Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(0, 0), new Point(0, 0)));
+                
             enemyCount = 5;
             for (int i = 0; i < nutCount; i++)
-                Game1.spriteManager.Enemies.Add(new StandardEnemy(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
+                //Game1.spriteManager.Enemies.Add(new StandardEnemy(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
             distributeObjects(Game1.spriteManager.Obstacles);
             distributeObjects(Game1.spriteManager.Nuts);
             distributeObjects(Game1.spriteManager.Enemies);
@@ -104,31 +108,35 @@ namespace Squirrel
             //prevent movement in case of collision
             collisionMovement(Game1.spriteManager.Obstacles);
             //collisionMovement(Game1.spriteManager.Enemies);
-
+            isMoving = false;
             //controls for map movement
             KeyboardState keystate = Keyboard.GetState();
             int position = 0;
             if ((keystate.IsKeyDown(Keys.Up) || keystate.IsKeyDown(Keys.W)) && canMoveUp)
             {
                 this.updateMapPosition(new Vector2(0f, -5f));
+                isMoving = true;
                 position += 1;
             }
             if ((keystate.IsKeyDown(Keys.Down) || keystate.IsKeyDown(Keys.S)) && canMoveDown)
             {
                 this.updateMapPosition(new Vector2(0f, 5f));
+                isMoving = true;
                 position += 4;
             }
             if ((keystate.IsKeyDown(Keys.Right) || keystate.IsKeyDown(Keys.D)) && canMoveRight)
             {
                 this.updateMapPosition(new Vector2(5f, 0f));
+                isMoving = true;
                 position += 2;
             }
             if ((keystate.IsKeyDown(Keys.Left) || keystate.IsKeyDown(Keys.A)) && canMoveLeft)
             {
                 this.updateMapPosition(new Vector2(-5f, 0f));
+                isMoving = true;
                 position += 8;
             }
-
+            
             switch (position)
             {
                 case 1:
@@ -162,19 +170,34 @@ namespace Squirrel
             foreach (Sprite enemy in Game1.spriteManager.Enemies)
             {
                 //move the enemy toward the player if the enemy is entirely on screen
+
+                ((Enemy)enemy).currentAnimation = ((Enemy)enemy).idle; // Reset animation.
+                
                 if (enemy.position.X >= 0 && enemy.position.X <= Game1.SCREEN_WIDTH - 64
                     && enemy.position.Y >= 0 && enemy.position.Y <= Game1.SCREEN_HEIGHT - 64)
                 {
                     Vector2 newPos = enemy.position;
                     if (enemy.position.X < Game1.spriteManager.Hero.position.X)
+                    {
                         newPos.X = enemy.position.X + 1;
+                        ((Enemy)enemy).facing = PlayerDirection.East;
+                        ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
+                    }
                     if (enemy.position.X > Game1.spriteManager.Hero.position.X)
+                    {
                         newPos.X = enemy.position.X - 1;
+                        ((Enemy)enemy).facing = PlayerDirection.West;
+                        ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
+                    }
                     if (enemy.position.Y < Game1.spriteManager.Hero.position.Y)
                         newPos.Y = enemy.position.Y + 1;
                     if (enemy.position.Y > Game1.spriteManager.Hero.position.Y)
                         newPos.Y = enemy.position.Y - 1;
                     enemy.moveTo(newPos);
+                }
+                else
+                {
+                    
                 }
             }
 
@@ -335,7 +358,9 @@ namespace Squirrel
                 bool collision;
                 do
                 {
-                    obj.moveTo(randomMapPosition());
+                    Vector2 RND_Position = randomMapPosition();
+                    obj.moveTo(RND_Position);
+                    obj.calcDrawDepth();
                     collision = false;
                     /*
                     if (obj.collidesWith(Game1.spriteManager.HomeTree))

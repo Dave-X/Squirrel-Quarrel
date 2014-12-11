@@ -24,6 +24,7 @@ namespace Squirrel
         Texture2D test1;
         Texture2D test2;
         public static SpriteManager spriteManager;
+        public static Interface iface;
 
 
         // Changed these to constants and declared here so the size can be set in the constructor.
@@ -65,8 +66,11 @@ namespace Squirrel
             Components.Add(menu);
             mainMenu = new MainMenu(this);
             Components.Add(mainMenu);
+            iface = new Interface(this);
+            Components.Add(iface);
 
             gameState = GameStates.Main_Menu;
+
 
             base.Initialize();
         }
