@@ -45,6 +45,13 @@ namespace Squirrel
                 }
             }
 
+            Player player = Game1.spriteManager.Hero as Player;
+            if (this.collidesWith(Game1.spriteManager.Hero) && !player.red)
+            {
+                player.takeDamage(this.attack());
+                player.red = true;
+            }
+
             if (red)
             {
                 color = Color.Red;

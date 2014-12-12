@@ -21,13 +21,14 @@ namespace Squirrel
         Vector2 topBorderPos, bttmBorderPos, leftBorderPos, rightBorderPos;  //positions of border pieces
         Vector2 lrBorderSize, tbBorderSize;  //size of border pieces
         Texture2D texture;         //map background texture
-        Texture2D rock1Tex, rock2Tex, rock3Tex, nutTex, enemyTex;     //rock textures
+        Texture2D rock1Tex, rock2Tex, rock3Tex, nutTex, enemyTex, speedPowerUpTex;     //rock textures
         SpriteBatch spriteBatch;   //spritebatch to draw to screen
         Random random;
         public Boolean isMoving = false;
+        Player player;
 
         bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;     //allows the player to move the direction if true
-        int rockCount, nutCount, enemyCount;                        //number of rock obstacles on the map
+        int rockCount, nutCount, enemyCount, speedPowerUpCount;                        //number of rock obstacles on the map
         PlayerDirection playerDirection;                //the player's movement direction
 
         public Map(Game game)
@@ -62,19 +63,29 @@ namespace Squirrel
             // CHANGED -> nutTex = Game.Content.Load<Texture2D>("acorn");
             nutTex = Game.Content.Load<Texture2D>("acornSmall");
             enemyTex = Game.Content.Load<Texture2D>("sampleSpriteSheet");
+            speedPowerUpTex = Game.Content.Load<Texture2D>("speedPowerUp");
             rockCount = 20;
             for (int i = 0; i < rockCount; i++)
-                Game1.spriteManager.Obstacles.Add(new Obstacle(rock1Tex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
+                Game1.spriteManager.Obstacles.Add(new Obstacle(rock1Tex, Vector2.Zero, new Point(-32, -64), new Point(0, 16)));
             nutCount = 15;
             for (int i = 0; i < nutCount; i++)
                 //CHANGED -> Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
-                Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(0, 0), new Point(0, 0)));
-                
+                Game1.spriteManager.Nuts.Add(new Nut(nutTex, Vector2.Zero, new Point(0, 0), new Point(0, 0)));
+            speedPowerUpCount = 5;
+            for (int i = 0; i < speedPowerUpCount; i++)
+                Game1.spriteManager.PowerUps.Add(new SpeedPowerUp(speedPowerUpTex, Vector2.Zero, new Point(0, 0), new Point(0, 0)));
             enemyCount = 5;
-            for (int i = 0; i < nutCount; i++)
+            for (int i = 0; i < enemyCount; i++)
+            {
                 //Game1.spriteManager.Enemies.Add(new StandardEnemy(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
+                Enemy x = new StandardEnemy(Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatIdle"), Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
+                Game1.spriteManager.Enemies.Add(x);
+                Texture2D xy = Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatMove");
+                x.move = new Animation(xy, new Point(92, 92), Point.Zero, new Point(8, 1), 64);
+            }
             distributeObjects(Game1.spriteManager.Obstacles);
             distributeObjects(Game1.spriteManager.Nuts);
+            distributeObjects(Game1.spriteManager.PowerUps);
             distributeObjects(Game1.spriteManager.Enemies);
 
             base.Initialize();
@@ -95,6 +106,8 @@ namespace Squirrel
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
+            player = Game1.spriteManager.Hero as Player;
+
             //boundaries for map movement to stop player from walking off the map.
             if (mapPosition.X <= -(mapSize.X - GraphicsDevice.Viewport.Width))     //Left boundary
                 mapPosition.X = -(mapSize.X - GraphicsDevice.Viewport.Width);
@@ -114,25 +127,25 @@ namespace Squirrel
             int position = 0;
             if ((keystate.IsKeyDown(Keys.Up) || keystate.IsKeyDown(Keys.W)) && canMoveUp)
             {
-                this.updateMapPosition(new Vector2(0f, -5f));
+                this.updateMapPosition(new Vector2(0f, -player.speed));
                 isMoving = true;
                 position += 1;
             }
             if ((keystate.IsKeyDown(Keys.Down) || keystate.IsKeyDown(Keys.S)) && canMoveDown)
             {
-                this.updateMapPosition(new Vector2(0f, 5f));
+                this.updateMapPosition(new Vector2(0f, player.speed));
                 isMoving = true;
                 position += 4;
             }
             if ((keystate.IsKeyDown(Keys.Right) || keystate.IsKeyDown(Keys.D)) && canMoveRight)
             {
-                this.updateMapPosition(new Vector2(5f, 0f));
+                this.updateMapPosition(new Vector2(player.speed, 0f));
                 isMoving = true;
                 position += 2;
             }
             if ((keystate.IsKeyDown(Keys.Left) || keystate.IsKeyDown(Keys.A)) && canMoveLeft)
             {
-                this.updateMapPosition(new Vector2(-5f, 0f));
+                this.updateMapPosition(new Vector2(-player.speed, 0f));
                 isMoving = true;
                 position += 8;
             }

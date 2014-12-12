@@ -91,6 +91,10 @@ namespace Squirrel
             {
                 s.Update(gameTime);
             }
+            foreach (Sprite s in PowerUps)
+            {
+                s.Update(gameTime);
+            }
             foreach (Sprite s in Enemies)
             {
                 s.Update(gameTime);
@@ -127,6 +131,13 @@ namespace Squirrel
                     Nuts.RemoveAt(i);
                 }
             }
+            for (int i = 0; i < PowerUps.Count; i++)
+            {
+                if (PowerUps[i].dead)
+                {
+                    PowerUps.RemoveAt(i);
+                }
+            }
         }
 
 
@@ -160,6 +171,10 @@ namespace Squirrel
                     s.Draw(gameTime, spriteBatch);
                 }
                 foreach (Sprite s in Nuts)
+                {
+                    s.Draw(gameTime, spriteBatch);
+                }
+                foreach (Sprite s in PowerUps)
                 {
                     s.Draw(gameTime, spriteBatch);
                 }

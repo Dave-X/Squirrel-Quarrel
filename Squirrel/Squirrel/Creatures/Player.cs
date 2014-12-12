@@ -22,20 +22,40 @@ namespace Squirrel
         public int nutsHeld = 0;
         public int totalCollected = 0; // Total amount of nuts collected.
 
+        //copy of enemy's red stuff
+        private int timeRed = 0;
+        public bool red = false;
+        private Color color = Color.White;
+        //
+
         public Player(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
             : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame)
         {
-
+            speed = 5f;
         }
 
         public Player(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame, Point collisionOffset, Point collisionCenter)
             : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame, collisionOffset, collisionCenter)
         {
-
+            speed = 5f;
         }
 
         public override void Update(GameTime gameTime)
         {
+            //red stuff copied from enemy
+            if (red)
+            {
+                color = Color.Red;
+                timeRed += gameTime.ElapsedGameTime.Milliseconds;
+                if (timeRed > 100)
+                {
+                    timeRed = 0;
+                    red = false;
+                    color = Color.White;
+                }
+            }
+            //
+
             // Handle control stuffs
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -179,7 +199,7 @@ namespace Squirrel
             //spriteBatch.Draw(currentAnimation.image, new Rectangle((int)position.X, (int)position.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), Color.White, 0f, Vector2.Zero, SE, this.drawDepth);
             //new Rectangle((int)position.X, (int)position.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y)
 
-            spriteBatch.Draw(currentAnimation.image, position, new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), Color.White, 0f, Vector2.Zero, 1.0f, SE, this.drawDepth);
+            spriteBatch.Draw(currentAnimation.image, position, new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), color, 0f, Vector2.Zero, 1.0f, SE, this.drawDepth);
             Debug.WriteLine(Game1.map.isMoving);
             //base.Draw(gameTime, spriteBatch);
         }

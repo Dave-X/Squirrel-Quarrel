@@ -23,6 +23,7 @@ namespace Squirrel
         Vector2 resumeButtonPos, quitButtonPos; //positions of buttons for clicking menu items
         int buttonWidth, buttonHeight;          //dimensions of buttons
         MouseState mouseState, oldMouseState;
+        KeyboardState keyboardState, oldKeyboardState;
         public bool isPaused { get; set; }
 
         public Menu(Game game)
@@ -72,6 +73,7 @@ namespace Squirrel
         public override void Update(GameTime gameTime)
         {
             mouseState = Mouse.GetState();
+            Game1.keyboardState = Keyboard.GetState();
             //show the mouse when the game is paused
             if (Game1.gameState == GameStates.Paused)
             {
@@ -83,6 +85,8 @@ namespace Squirrel
                     if (quitClick.Contains(mouseState.X, mouseState.Y))
                         Game1.gameState = GameStates.Main_Menu;
                 }
+                if (Game1.oldKeyboardState.IsKeyUp(Keys.Escape) && Game1.keyboardState.IsKeyDown(Keys.Escape))
+                    Game1.gameState = GameStates.Active;
             }
             else
             {
@@ -90,6 +94,7 @@ namespace Squirrel
             }
 
             oldMouseState = Mouse.GetState();  //get mouse state to prevent multiple clicks
+            Game1.oldKeyboardState = Keyboard.GetState();
 
             base.Update(gameTime);
         }

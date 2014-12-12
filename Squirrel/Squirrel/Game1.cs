@@ -23,6 +23,9 @@ namespace Squirrel
         MainMenu mainMenu;
         Texture2D test1;
         Texture2D test2;
+        Texture2D scoreBoard;
+        SpriteFont font;
+        public static KeyboardState keyboardState, oldKeyboardState;
         public static SpriteManager spriteManager;
         public static Interface iface;
 
@@ -83,7 +86,9 @@ namespace Squirrel
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-           
+
+            scoreBoard = Content.Load<Texture2D>("scoreLabel");
+            font = Content.Load<SpriteFont>("Calibri");
 
             // Testing stuff...
 
@@ -133,6 +138,13 @@ namespace Squirrel
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //check if player is dead
+            if ((Game1.spriteManager.Hero as Player).Health <= 0)
+            {
+                gameState = GameStates.Game_Over;
+            }
+
+            keyboardState = Keyboard.GetState();
             //skips over all game logic while game is paused
             if (gameState == GameStates.Paused)
             {
@@ -144,11 +156,25 @@ namespace Squirrel
                 mainMenu.Update(gameTime);  //needed so the mainmenu functionality still updates
                 return;
             }
+            else if (gameState == GameStates.Game_Over)
+            {
+                System.Diagnostics.Debug.WriteLine("game over");
+                mainMenu.gameOver = true;
+                mainMenu.Update(gameTime);  //needed so the mainmenu functionality still updates
+                return;
+            }
             else
             {
                 //opens the game menu
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (oldKeyboardState.IsKeyUp(Keys.Escape) && keyboardState.IsKeyDown(Keys.Escape))
                     gameState = GameStates.Paused;
+            }
+            oldKeyboardState = Keyboard.GetState();
+
+            //check for returning nuts to home tree
+            if (spriteManager.Hero.collidesWith(spriteManager.HomeTree))
+            {
+                (spriteManager.Hero as Player).dropOff();
             }
 
             base.Update(gameTime);
@@ -162,20 +188,43 @@ namespace Squirrel
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
-            // Section for drawing sprites.
-
-
-
-
             base.Draw(gameTime);
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-            {
-                //spriteBatch.Draw(test1, new Rectangle(500, 500, 128, 128), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.2f);
-                //spriteBatch.Draw(test2, new Rectangle(565, 564, 128, 128), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.5f);
 
+            spriteBatch.Begin();
+
+            //draw the score board
+            if (gameState == GameStates.Active || gameState == GameStates.Paused)
+            {
+                spriteBatch.Draw(scoreBoard, new Rectangle(1004, 20, 256, 64), Color.White);
+                spriteBatch.DrawString(font, (Game1.spriteManager.Hero as Player).totalCollected.ToString(), new Vector2(1180, 23), Color.DarkGreen);
             }
+
             spriteBatch.End();
+        }
+
+        /// <summary>
+        /// Reset the game
+        /// </summary>
+        public void resetGame()
+        {
+            //delete old
+            Components.Remove(map);
+            Components.Remove(spriteManager);
+            Components.Remove(menu);
+            Components.Remove(mainMenu);
+            Components.Remove(iface);
+
+            map = new Map(this);
+            Components.Add(map);
+            spriteManager = new SpriteManager(this);
+            Components.Add(spriteManager);
+
+            menu = new Menu(this);
+            Components.Add(menu);
+            mainMenu = new MainMenu(this);
+            Components.Add(mainMenu);
+            iface = new Interface(this);
+            Components.Add(iface);
         }
     }
 }

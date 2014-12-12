@@ -19,15 +19,19 @@ namespace Squirrel
     {
         Texture2D startTexture, exitTexture;          //map background texture
         SpriteBatch spriteBatch;    //spritebatch to draw to screen
-        Rectangle resumeClick, quitClick;       //clickable bounding boxes
+        Rectangle startClick, exitClick;       //clickable bounding boxes
         Vector2 resumeButtonPos, quitButtonPos; //positions of buttons for clicking menu items
         int buttonWidth, buttonHeight;          //dimensions of buttons
         public bool isPaused { get; set; }
+        public bool gameOver = false;
+        SpriteFont font;
+        Game1 game1;
 
         public MainMenu(Game game)
             : base(game)
         {
             // TODO: Construct any child components here
+            game1 = game as Game1;
         }
 
         /// <summary>
@@ -46,8 +50,8 @@ namespace Squirrel
                 GraphicsDevice.Viewport.Height / 2 - buttonHeight / 2 - 50);
             quitButtonPos = new Vector2(GraphicsDevice.Viewport.Width / 2 - buttonWidth / 2,
                 GraphicsDevice.Viewport.Height / 2 - buttonHeight / 2 + 50);
-            resumeClick = new Rectangle((int)resumeButtonPos.X, (int)resumeButtonPos.Y, buttonWidth, buttonHeight);
-            quitClick = new Rectangle((int)quitButtonPos.X, (int)quitButtonPos.Y, buttonWidth, buttonHeight);
+            startClick = new Rectangle((int)resumeButtonPos.X, (int)resumeButtonPos.Y, buttonWidth, buttonHeight);
+            exitClick = new Rectangle((int)quitButtonPos.X, (int)quitButtonPos.Y, buttonWidth, buttonHeight);
         }
 
         /// <summary>
@@ -61,6 +65,8 @@ namespace Squirrel
             startTexture = Game.Content.Load<Texture2D>("startButton");
             exitTexture = Game.Content.Load<Texture2D>("exitButton");
 
+            font = Game.Content.Load<SpriteFont>("CalibriLarge");
+
             base.LoadContent();
         }
 
@@ -71,15 +77,19 @@ namespace Squirrel
         public override void Update(GameTime gameTime)
         {
             //show the mouse when the game is paused
-            if (Game1.gameState == GameStates.Main_Menu)
+            if (Game1.gameState == GameStates.Main_Menu || Game1.gameState == GameStates.Game_Over)
             {
                 Game.IsMouseVisible = true;
                 MouseState mouseState = Mouse.GetState();
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    if (resumeClick.Contains(mouseState.X, mouseState.Y))
+                    if (startClick.Contains(mouseState.X, mouseState.Y))
+                    {
+                        if (gameOver)
+                            game1.resetGame();
                         Game1.gameState = GameStates.Active;
-                    if (quitClick.Contains(mouseState.X, mouseState.Y))
+                    }
+                    if (exitClick.Contains(mouseState.X, mouseState.Y))
                         Game.Exit();
                 }
             }
@@ -97,7 +107,7 @@ namespace Squirrel
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Draw(GameTime gameTime)
         {
-            if (Game1.gameState == GameStates.Main_Menu)
+            if (Game1.gameState == GameStates.Main_Menu || Game1.gameState == GameStates.Game_Over)
             {
                 spriteBatch.Begin();
 
@@ -105,6 +115,11 @@ namespace Squirrel
 
                 spriteBatch.Draw(startTexture, resumeButtonPos, Color.White);
                 spriteBatch.Draw(exitTexture, quitButtonPos, Color.White);
+
+                if (gameOver)
+                {
+                    spriteBatch.DrawString(font, "Game Over", new Vector2(492, 475), Color.DarkRed);
+                }
 
                 spriteBatch.End();
             }
