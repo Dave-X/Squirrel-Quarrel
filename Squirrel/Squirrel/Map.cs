@@ -192,20 +192,20 @@ namespace Squirrel
                     Vector2 newPos = enemy.position;
                     if (enemy.position.X < Game1.spriteManager.Hero.position.X)
                     {
-                        newPos.X = enemy.position.X + 1;
+                        newPos.X = enemy.position.X + (enemy as Enemy).speed;
                         ((Enemy)enemy).facing = PlayerDirection.East;
                         ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
                     }
                     if (enemy.position.X > Game1.spriteManager.Hero.position.X)
                     {
-                        newPos.X = enemy.position.X - 1;
+                        newPos.X = enemy.position.X - (enemy as Enemy).speed;
                         ((Enemy)enemy).facing = PlayerDirection.West;
                         ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
                     }
                     if (enemy.position.Y < Game1.spriteManager.Hero.position.Y)
-                        newPos.Y = enemy.position.Y + 1;
+                        newPos.Y = enemy.position.Y + (enemy as Enemy).speed;
                     if (enemy.position.Y > Game1.spriteManager.Hero.position.Y)
-                        newPos.Y = enemy.position.Y - 1;
+                        newPos.Y = enemy.position.Y - (enemy as Enemy).speed;
                     enemy.moveTo(newPos);
                 }
                 else
