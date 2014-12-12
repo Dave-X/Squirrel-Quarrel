@@ -44,7 +44,7 @@ namespace Squirrel
                     this.hit = true;
                     c.takeDamage(25);
                     ((Enemy)c).red = true;
-                    if (c.Health == 0)
+                    if (c.Health <= 0)
                     {
                         c.dead = true;
                     }

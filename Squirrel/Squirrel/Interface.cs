@@ -62,6 +62,7 @@ namespace Squirrel
                 {
                     spriteBatch.Draw(nutBackground, new Vector2(608, 648), Color.White);
                     spriteBatch.DrawString(spriteFont_Calibri, ((Player)Game1.spriteManager.Hero).nutsHeld.ToString(), new Vector2(644, 665), Color.Blue);
+                    spriteBatch.DrawString(spriteFont_Calibri, "Health: " + ((Player)Game1.spriteManager.Hero).Health.ToString(), new Vector2(5, 680), Color.White);
                 }
                 spriteBatch.End();
             }

@@ -24,9 +24,11 @@ namespace Squirrel
         public List<Sprite> Nuts = new List<Sprite>();
         public List<Sprite> Enemies = new List<Sprite>();
         public List<Projectile> Projectiles = new List<Projectile>(); // Bullets and such.
+        public List<Bust> Busts = new List<Bust>(); // Bullets and such.
         public Sprite Hero; // The player.
         public Sprite HomeTree; // The center hometree.
         private Texture2D bullet;
+        private Texture2D bust;
         
         public SpriteManager(Game game)
             : base(game)
@@ -41,6 +43,7 @@ namespace Squirrel
         {
             spriteBatch = new SpriteBatch(Game.GraphicsDevice);
             bullet = Game.Content.Load<Texture2D>(@"Textures\bulletS");
+            bust = Game.Content.Load<Texture2D>(@"bust");
 
 
             // Hero animations.
@@ -67,6 +70,7 @@ namespace Squirrel
             HomeTree.collisionOffset.X = -132;
             HomeTree.collisionOffset.Y = -309;
             HomeTree.collisionCenter.Y = -240;
+            HomeTree.drawDepth = 0.42f;
             Obstacles.Add(HomeTree);
             base.Initialize();
         }
@@ -99,6 +103,10 @@ namespace Squirrel
             {
                 s.Update(gameTime);
             }
+            foreach (Sprite s in Busts)
+            {
+                s.Update(gameTime);
+            }
             Hero.Update(gameTime);
             base.Update(gameTime);
         }
@@ -108,7 +116,7 @@ namespace Squirrel
         {
             for (int i = 0; i < Projectiles.Count; i++)
             {
-                if (Projectiles[i].dead || Projectiles[i].hit)
+                if (Projectiles[i].dead || ((Projectile)Projectiles[i]).hit)
                 {
                     Projectiles.RemoveAt(i);
                 }
@@ -136,6 +144,13 @@ namespace Squirrel
                     (Game1.spriteManager.Hero as Player).powerupsCollected++;
                 }
             }
+            for (int i = 0; i < Busts.Count; i++)
+            {
+                if (Busts[i].dead)
+                {
+                    Busts.RemoveAt(i);
+                }
+            }
         }
 
 
@@ -155,6 +170,10 @@ namespace Squirrel
             this.Projectiles.Add(new Projectile(bullet, reposition, direction));
         }
 
+        public void BustANut(Vector2 position)
+        {
+            this.Busts.Add(new Bust(bust, position - new Vector2(320, 320), new Point(256, 256), Point.Zero, new Point(768, 512), 96));
+        }
 
 
 
@@ -184,7 +203,10 @@ namespace Squirrel
                 {
                     s.Draw(gameTime, spriteBatch);
                 }
-
+                foreach (Sprite s in Busts)
+                {
+                    s.Draw(gameTime, spriteBatch);
+                }
                  
 
 

@@ -17,7 +17,7 @@ namespace Squirrel
         SpriteEffects SE = SpriteEffects.None;
         float XShot = 0f;
         float YShot = 0f;
-        int shotRate = 450; // LOWER IS FASTER;
+        int shotRate = 400; // LOWER IS FASTER;
         int timeSinceLastShot;
         public int nutsHeld = 0;
         public int totalCollected = 0; // Total amount of nuts collected.
@@ -72,6 +72,17 @@ namespace Squirrel
             else
             {
                 currentAnimation = idle;
+            }
+
+            //bust a nut
+            if (previousKeyboardState.IsKeyDown(Keys.LeftShift) == true && currentKeyboardState.IsKeyUp(Keys.LeftShift) == false)
+            {
+                if (this.nutsHeld == 2)
+                {
+                    nutsHeld = 0;
+                    Game1.maxNuts -= 2;
+                    Game1.spriteManager.BustANut(this.position);
+                }
             }
 
             if (previousKeyboardState.IsKeyDown(Keys.Space) == true && currentKeyboardState.IsKeyUp(Keys.Space) == false)
@@ -163,10 +174,13 @@ namespace Squirrel
                     //System.Diagnostics.Debug.WriteLine("Collision with " + s.ToString());
                     //System.Diagnostics.Debug.WriteLine(this.collisionRectangle.ToString() + " collided with " +  s.collisionRectangle.ToString());
                     //System.Diagnostics.Debug.WriteLine("Draw depth: " + s.drawDepth);
+                    Debug.WriteLine("LEFT: " + s.collisionRectangle.Left + "RIGHT: " + s.collisionRectangle.Right);
 
                 }
             }
-           
+
+
+            
             base.Update(gameTime);
         }
 
@@ -205,6 +219,7 @@ namespace Squirrel
             spriteBatch.Draw(currentAnimation.image, position, new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), color, 0f, Vector2.Zero, 1.0f, SE, this.drawDepth);
             Debug.WriteLine(Game1.map.isMoving);
             //base.Draw(gameTime, spriteBatch);
+
         }
     }
 }

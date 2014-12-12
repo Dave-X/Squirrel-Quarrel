@@ -11,7 +11,7 @@ namespace Squirrel
     {
         public Animation idle;
         public Animation move;
-        public Animation attack;
+        public Animation attackA;
         public Animation death;
         public Animation currentAnimation;
         public int timeSinceLastFrame = 0;

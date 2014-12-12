@@ -12,7 +12,12 @@ namespace Squirrel
         private int Strength { get; set; }      //how much damage the enemy does when it attacks
         SpriteEffects SE;
         private int timeRed = 0;
+        private int attackCooldn = 640;
+        private int timeSinceLastAttack = 0;
+        public bool attacking = false;
         public bool red = false;
+        public int offsetX = 0;
+        
         private Color color = Color.White;
         public PlayerDirection facing;
 
@@ -68,10 +73,14 @@ namespace Squirrel
             }
 
             Player player = Game1.spriteManager.Hero as Player;
-            if (this.collidesWith(Game1.spriteManager.Hero) && !player.red)
+            if (this.collidesWith(Game1.spriteManager.Hero) && !player.red && (timeSinceLastAttack > attackCooldn))
             {
                 player.takeDamage(this.attack());
+
                 player.red = true;
+                timeSinceLastAttack = 0;
+                attacking = true;
+                currentAnimation = attackA;
             }
 
             if (red)
@@ -83,9 +92,15 @@ namespace Squirrel
                     timeRed = 0;
                     red = false;
                     color = Color.White;
+                    
                 }
             }
 
+            timeSinceLastAttack += gameTime.ElapsedGameTime.Milliseconds;
+            if (timeSinceLastAttack >= attackCooldn)
+            {
+                attacking = false;
+            }
 
             base.Update(gameTime);
         }
@@ -101,6 +116,7 @@ namespace Squirrel
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            
             if (this.facing == PlayerDirection.East)
             {
                 SE = SpriteEffects.None;
@@ -110,7 +126,12 @@ namespace Squirrel
                 SE = SpriteEffects.FlipHorizontally;
             }
 
-            spriteBatch.Draw(currentAnimation.image, new Rectangle((int)position.X, (int)position.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), color, 0f, Vector2.Zero, SE, this.drawDepth);
+            if (this.attacking && this.facing == PlayerDirection.West)
+            {
+                offsetX = 164;
+            }
+
+            spriteBatch.Draw(currentAnimation.image, new Rectangle((int)position.X - offsetX, (int)position.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), new Rectangle(currentAnimation.currentFrame.X * currentAnimation.frameSize.X, currentAnimation.currentFrame.Y * currentAnimation.frameSize.Y, currentAnimation.frameSize.X, currentAnimation.frameSize.Y), color, 0f, Vector2.Zero, SE, this.drawDepth);
 
             //base.Draw(gameTime, spriteBatch);
         }

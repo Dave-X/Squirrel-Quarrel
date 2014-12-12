@@ -28,7 +28,7 @@ namespace Squirrel
         public static Interface iface;
 
         public StatsScreen statsScreen;
-        public static int maxNuts = 15;
+        public static int maxNuts = 30;
 
 
         // Changed these to constants and declared here so the size can be set in the constructor.

@@ -73,13 +73,15 @@ namespace Squirrel
             speedPowerUpCount = 2;
             for (int i = 0; i < speedPowerUpCount; i++)
                 Game1.spriteManager.PowerUps.Add(new SpeedPowerUp(speedPowerUpTex, Vector2.Zero, new Point(0, 0), new Point(0, 0)));
-            enemyCount = 5;
+            enemyCount = 50;
             for (int i = 0; i < enemyCount; i++)
             {
                 Enemy x = new StandardEnemy(Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatIdle"), Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
                 Game1.spriteManager.Enemies.Add(x);
                 Texture2D xy = Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatMove");
+                Texture2D atk = Game.Content.Load<Texture2D>(@"Textures\Goat\goatKick");
                 x.move = new Animation(xy, new Point(92, 92), Point.Zero, new Point(8, 1), 64);
+                x.attackA = new Animation(atk, new Point(256, 92), Point.Zero, new Point(5, 2), 64);
             }
             distributeObjects(Game1.spriteManager.Obstacles);
             distributeObjects(Game1.spriteManager.Nuts);
@@ -181,28 +183,32 @@ namespace Squirrel
             foreach (Sprite enemy in Game1.spriteManager.Enemies)
             {
                 //move the enemy toward the player if the enemy is entirely on screen
-
-                ((Enemy)enemy).currentAnimation = ((Enemy)enemy).idle; // Reset animation.
+                if ((((Enemy)enemy).attacking == false))
+                {
+                    ((Enemy)enemy).currentAnimation = ((Enemy)enemy).idle; // Reset animation.
+                }
                 
                 if (enemy.position.X >= 0 && enemy.position.X <= Game1.SCREEN_WIDTH - 64
                     && enemy.position.Y >= 0 && enemy.position.Y <= Game1.SCREEN_HEIGHT - 64)
                 {
                     Vector2 newPos = enemy.position;
-                    if (enemy.position.X < Game1.spriteManager.Hero.position.X)
+                    if (enemy.position.X < Game1.spriteManager.Hero.position.X && ((Enemy)enemy).attacking == false)
                     {
                         newPos.X = enemy.position.X + (enemy as Enemy).speed;
                         ((Enemy)enemy).facing = PlayerDirection.East;
                         ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
+                        ((Enemy)enemy).offsetX = 0;
                     }
-                    if (enemy.position.X > Game1.spriteManager.Hero.position.X)
+                    if (enemy.position.X > Game1.spriteManager.Hero.position.X && ((Enemy)enemy).attacking == false)
                     {
                         newPos.X = enemy.position.X - (enemy as Enemy).speed;
                         ((Enemy)enemy).facing = PlayerDirection.West;
                         ((Enemy)enemy).currentAnimation = ((Enemy)enemy).move;
+                        ((Enemy)enemy).offsetX = 0;
                     }
-                    if (enemy.position.Y < Game1.spriteManager.Hero.position.Y)
+                    if (enemy.position.Y < Game1.spriteManager.Hero.position.Y && ((Enemy)enemy).attacking == false)
                         newPos.Y = enemy.position.Y + (enemy as Enemy).speed;
-                    if (enemy.position.Y > Game1.spriteManager.Hero.position.Y)
+                    if (enemy.position.Y > Game1.spriteManager.Hero.position.Y && ((Enemy)enemy).attacking == false)
                         newPos.Y = enemy.position.Y - (enemy as Enemy).speed;
                     enemy.moveTo(newPos);
                 }
@@ -293,7 +299,10 @@ namespace Squirrel
             {
                 projectile.moveTo(projectile.position - (oldPosition - this.mapPosition));
             }
-
+            foreach (Sprite bust in Game1.spriteManager.Busts)
+            {
+                bust.moveTo(bust.position - (oldPosition - this.mapPosition));
+            }
 
 
             //Game1.spriteManager.HomeTree.position -= (oldPosition - this.mapPosition);
@@ -356,6 +365,7 @@ namespace Squirrel
                     }
                 }
             }
+           
         }
 
         /// <summary>
