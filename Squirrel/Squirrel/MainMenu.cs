@@ -86,7 +86,7 @@ namespace Squirrel
                 {
                     if (startClick.Contains(mouseState.X, mouseState.Y))
                     {
-                        if (gameOver)
+                        if (Game1.gameOver)
                             game1.resetGame();
                         Game1.gameState = GameStates.Active;
                     }

@@ -29,6 +29,7 @@ namespace Squirrel
 
         public StatsScreen statsScreen;
         public static int maxNuts = 30;
+        public static bool gameOver = false;
 
 
         // Changed these to constants and declared here so the size can be set in the constructor.
@@ -114,9 +115,13 @@ namespace Squirrel
             if ((Game1.spriteManager.Hero as Player).Health <= 0)
             {
                 gameState = GameStates.Game_Over;
+                gameOver = true;
             }
             if ((Game1.spriteManager.Hero as Player).totalCollected == maxNuts)
+            {
                 gameState = GameStates.Game_Over;
+                gameOver = true;
+            }
 
             keyboardState = Keyboard.GetState();
             //skips over all game logic while game is paused
@@ -185,6 +190,7 @@ namespace Squirrel
             Components.Remove(spriteManager);
             Components.Remove(menu);
             Components.Remove(mainMenu);
+            Components.Remove(statsScreen);
             Components.Remove(iface);
 
             map = new Map(this);
@@ -196,6 +202,8 @@ namespace Squirrel
             Components.Add(menu);
             mainMenu = new MainMenu(this);
             Components.Add(mainMenu);
+            statsScreen = new StatsScreen(this);
+            Components.Add(statsScreen);
             iface = new Interface(this);
             Components.Add(iface);
 
