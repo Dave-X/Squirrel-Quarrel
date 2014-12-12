@@ -188,8 +188,8 @@ namespace Squirrel
             Components.Remove(iface);
 
             map = new Map(this);
-            Components.Add(map);
             spriteManager = new SpriteManager(this);
+            Components.Add(map);
             Components.Add(spriteManager);
 
             menu = new Menu(this);
@@ -198,6 +198,8 @@ namespace Squirrel
             Components.Add(mainMenu);
             iface = new Interface(this);
             Components.Add(iface);
+
+           
         }
     }
 }

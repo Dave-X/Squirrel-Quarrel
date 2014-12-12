@@ -35,7 +35,6 @@ namespace Squirrel
             : base(game)
         {
             mapSize = new Vector2(5120f, 2880f);
-            
             resetMap();
         }
 
