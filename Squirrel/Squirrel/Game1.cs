@@ -21,13 +21,14 @@ namespace Squirrel
         public static Map map;
         Menu menu;
         MainMenu mainMenu;
-        Texture2D test1;
-        Texture2D test2;
         Texture2D scoreBoard;
         SpriteFont font;
         public static KeyboardState keyboardState, oldKeyboardState;
         public static SpriteManager spriteManager;
         public static Interface iface;
+
+        public StatsScreen statsScreen;
+        public static int maxNuts = 1;
 
 
         // Changed these to constants and declared here so the size can be set in the constructor.
@@ -69,6 +70,8 @@ namespace Squirrel
             Components.Add(menu);
             mainMenu = new MainMenu(this);
             Components.Add(mainMenu);
+            statsScreen = new StatsScreen(this);
+            Components.Add(statsScreen);
             iface = new Interface(this);
             Components.Add(iface);
 
@@ -89,37 +92,6 @@ namespace Squirrel
 
             scoreBoard = Content.Load<Texture2D>("scoreLabel");
             font = Content.Load<SpriteFont>("Calibri");
-
-            // Testing stuff...
-
-            //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero));
-            //Obstacles.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            //Enemies.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_1"), new Vector2(128, 256), Point.Zero));
-            //Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_2"), Vector2.Zero, Point.Zero));
-            //Obstacles.Sprites.Add(new AnimatedSprite(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            //Hometree.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), Vector2.Zero));
-            
-            
-            //Hero.Sprites.Add(new Player(Content.Load<Texture2D>(@"sampleSpriteSheet"), Vector2.Zero, new Point(128, 128), new Point(0, 0), new Point(4, 4), 16));
-            
-            /*
-            // holy comments
-
-            Obstacles.Sprites.Add(new StaticSprite(Content.Load<Texture2D>(@"Textures\Static\Rock_3"), new Vector2(0, 0)));
-            Obstacles.Sprites[0].moveTo(Obstacles.Sprites[0].center());
-            Obstacles.Sprites[0].collisionOffset.Y = -32; // Bring in the top and bottom by 16 pixels each.
-            Obstacles.Sprites[0].collisionOffset.X = -16; 
-            Obstacles.Sprites[0].collisionCenter.Y = 48;
-            
-            Hero.Sprites[0].collisionOffset.X = -16;
-            Hero.Sprites[0].collisionOffset.Y = -16;
-            //Hero.Sprites[0].collisionCenter.Y = -128;
-            Hero.Sprites[0].moveTo(Hero.Sprites[0].center());
-
-            */
-
-
         }
 
         /// <summary>
@@ -143,6 +115,8 @@ namespace Squirrel
             {
                 gameState = GameStates.Game_Over;
             }
+            if ((Game1.spriteManager.Hero as Player).totalCollected == maxNuts)
+                gameState = GameStates.Game_Over;
 
             keyboardState = Keyboard.GetState();
             //skips over all game logic while game is paused
@@ -158,9 +132,8 @@ namespace Squirrel
             }
             else if (gameState == GameStates.Game_Over)
             {
-                System.Diagnostics.Debug.WriteLine("game over");
-                mainMenu.gameOver = true;
-                mainMenu.Update(gameTime);  //needed so the mainmenu functionality still updates
+                statsScreen.gameOver = true;
+                statsScreen.Update(gameTime);  //needed so the mainmenu functionality still updates
                 return;
             }
             else

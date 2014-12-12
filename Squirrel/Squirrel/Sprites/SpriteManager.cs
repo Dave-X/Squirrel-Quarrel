@@ -61,10 +61,6 @@ namespace Squirrel
             //Hero.collisionOffset.Y = -16;
             //Hero.collisionOffset.X = -8;
             //Hero.moveTo(Hero.center());
-            Enemy x = new StandardEnemy(Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatIdle"), Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
-            Enemies.Add(x);
-            Texture2D xy = Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatMove");
-            x.move = new Animation(xy, new Point(92, 92), Point.Zero, new Point(8, 1), 64);
 
 
             HomeTree = new StaticSprite(Game.Content.Load<Texture2D>(@"Textures\Static\Home_Tree"), new Vector2(Hero.position.X - 290, Hero.position.Y - 650));
@@ -122,6 +118,7 @@ namespace Squirrel
                 if (Enemies[i].dead)
                 {
                     Enemies.RemoveAt(i);
+                    (Game1.spriteManager.Hero as Player).enemiesKilled++;
                 }
             }
             for (int i = 0; i < Nuts.Count; i++)
@@ -136,6 +133,7 @@ namespace Squirrel
                 if (PowerUps[i].dead)
                 {
                     PowerUps.RemoveAt(i);
+                    (Game1.spriteManager.Hero as Player).powerupsCollected++;
                 }
             }
         }

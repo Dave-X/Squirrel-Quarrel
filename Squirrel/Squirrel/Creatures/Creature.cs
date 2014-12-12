@@ -10,7 +10,7 @@ namespace Squirrel
     public class Creature : AnimatedSprite
     {
         public int Health = 100; // The health of the creature.
-        public float speed = 3f;
+        public float speed = 2f;
 
         public Creature(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
             : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame)

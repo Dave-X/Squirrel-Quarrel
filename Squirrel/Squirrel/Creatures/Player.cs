@@ -28,6 +28,9 @@ namespace Squirrel
         private Color color = Color.White;
         //
 
+        public int enemiesKilled = 0;
+        public int powerupsCollected = 0;
+
         public Player(Texture2D image, Vector2 position, Point frameSize, Point currentFrame, Point sheetSize, int millisecondsPerFrame)
             : base(image, position, frameSize, currentFrame, sheetSize, millisecondsPerFrame)
         {

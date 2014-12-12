@@ -67,17 +67,15 @@ namespace Squirrel
             rockCount = 20;
             for (int i = 0; i < rockCount; i++)
                 Game1.spriteManager.Obstacles.Add(new Obstacle(rock1Tex, Vector2.Zero, new Point(-32, -64), new Point(0, 16)));
-            nutCount = 15;
+            nutCount = Game1.maxNuts;
             for (int i = 0; i < nutCount; i++)
-                //CHANGED -> Game1.spriteManager.Nuts.Add(new Nut(nutTex, new Vector2(0, 0), new Point(-32, -64), new Point(0, 16)));
                 Game1.spriteManager.Nuts.Add(new Nut(nutTex, Vector2.Zero, new Point(0, 0), new Point(0, 0)));
-            speedPowerUpCount = 5;
+            speedPowerUpCount = 2;
             for (int i = 0; i < speedPowerUpCount; i++)
                 Game1.spriteManager.PowerUps.Add(new SpeedPowerUp(speedPowerUpTex, Vector2.Zero, new Point(0, 0), new Point(0, 0)));
             enemyCount = 5;
             for (int i = 0; i < enemyCount; i++)
             {
-                //Game1.spriteManager.Enemies.Add(new StandardEnemy(Game.Content.Load<Texture2D>(@"sampleSpritesheet"), Vector2.Zero, new Point(128, 128), Point.Zero, new Point(4, 4), 16));
                 Enemy x = new StandardEnemy(Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatIdle"), Vector2.Zero, new Point(92, 92), Point.Zero, new Point(8, 1), 256);
                 Game1.spriteManager.Enemies.Add(x);
                 Texture2D xy = Game.Content.Load<Texture2D>(@"Textures\Goat\darkGoatMove");
@@ -375,11 +373,12 @@ namespace Squirrel
                     obj.moveTo(RND_Position);
                     obj.calcDrawDepth();
                     collision = false;
-                    /*
-                    if (obj.collidesWith(Game1.spriteManager.HomeTree))
+                    
+                    //make sure nothing spawns on the main screen
+                    if (obj.position.X >= -64 && obj.position.X <= Game1.SCREEN_WIDTH
+                        && obj.position.Y >= -64 && obj.position.Y <= Game1.SCREEN_HEIGHT)
                         collision = true;
-                    if (obj.collidesWith(Game1.spriteManager.Hero))
-                        collision = true;*/
+
                     foreach (Sprite obj2 in Game1.spriteManager.Obstacles)
                     {
                         if (obj == obj2)

@@ -94,6 +94,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Sprites\SpriteManager.cs" />
     <Compile Include="Sprites\StaticSprite.cs" />
+    <Compile Include="StatsScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
