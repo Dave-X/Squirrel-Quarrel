@@ -17,7 +17,7 @@ namespace Squirrel
     /// </summary>
     public class MainMenu : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        Texture2D startTexture, exitTexture;          //map background texture
+        Texture2D startTexture, exitTexture, background;          //background texture
         SpriteBatch spriteBatch;    //spritebatch to draw to screen
         Rectangle startClick, exitClick;       //clickable bounding boxes
         Vector2 resumeButtonPos, quitButtonPos; //positions of buttons for clicking menu items
@@ -64,6 +64,7 @@ namespace Squirrel
             spriteBatch = new SpriteBatch(GraphicsDevice);
             startTexture = Game.Content.Load<Texture2D>("startButton");
             exitTexture = Game.Content.Load<Texture2D>("exitButton");
+            background = Game.Content.Load<Texture2D>("titleScreen");
 
             font = Game.Content.Load<SpriteFont>("CalibriLarge");
 
@@ -113,12 +114,14 @@ namespace Squirrel
 
                 GraphicsDevice.Clear(Color.ForestGreen);
 
+                spriteBatch.Draw(background, Vector2.Zero, Color.White);
+
                 spriteBatch.Draw(startTexture, resumeButtonPos, Color.White);
                 spriteBatch.Draw(exitTexture, quitButtonPos, Color.White);
 
                 if (gameOver)
                 {
-                    spriteBatch.DrawString(font, "Game Over", new Vector2(492, 475), Color.DarkRed);
+                    spriteBatch.DrawString(font, "Game Over", new Vector2(492, 475), Color.Red);
                 }
 
                 spriteBatch.End();

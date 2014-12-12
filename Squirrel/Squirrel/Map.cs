@@ -95,7 +95,7 @@ namespace Squirrel
         {
             //load in the texture for the ground (it will be drawn independent of the SpriteBatch stuff)
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            texture = Game.Content.Load<Texture2D>("ground");
+            texture = Game.Content.Load<Texture2D>("ground2");
             
             base.LoadContent();
         }

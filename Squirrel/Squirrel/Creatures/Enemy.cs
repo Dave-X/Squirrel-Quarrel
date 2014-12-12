@@ -30,6 +30,28 @@ namespace Squirrel
 
         public override void Update(GameTime gameTime)
         {
+            //make sure the enemy walks around obstacles
+            foreach (Sprite obstacle in Game1.spriteManager.Obstacles)
+            {
+                if (collidesWith(obstacle))
+                {
+                    if (position.X - obstacle.position.X <= 0 || position.X - obstacle.position.X >= 64)
+                    {
+                        if (position.Y > obstacle.position.Y)
+                            moveTo(position.X, position.Y + speed);
+                        else
+                            moveTo(position.X, position.Y - speed);
+                    }
+                    if (position.Y - obstacle.position.Y <= 0 || position.Y - obstacle.position.Y >= 64)
+                    {
+                        if (position.X > obstacle.position.X)
+                            moveTo(position.X + speed, position.Y);
+                        else
+                            moveTo(position.X - speed, position.Y);
+                    }
+                }
+            }
+
             // Update draw order.
             //this.drawDepth = Game1.map.
 
